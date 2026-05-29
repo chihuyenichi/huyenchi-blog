@@ -99,7 +99,7 @@ export default function AdminPage() {
       <nav className="text-sm text-text-muted mb-6">
         <Link href="/" className="hover:text-accent transition-colors">Home</Link>
         <span className="mx-2">/</span>
-        <span className="text-text-secondary">Admin</span>
+        <span className="text-text-secondary">DaoHuyenChi</span>
       </nav>
 
       <h1 className="text-2xl font-bold text-text mb-6">Admin — Publish Writeup</h1>
