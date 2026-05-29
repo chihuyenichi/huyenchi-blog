@@ -20,8 +20,7 @@ export function getAllPosts(): PostMeta[] {
     const fileContents = fs.readFileSync(fullPath, 'utf8')
     const { data, content } = matter(fileContents)
 
-    const relativePath = path.relative(postsDirectory, fullPath)
-    const slug = relativePath.replace(/\.md$/, '').replace(/\\/g, '/')
+    const slug = path.basename(fullPath).replace(/\.md$/, '')
 
     return {
       slug,
@@ -54,10 +53,11 @@ function getAllPostFiles(dir: string): string[] {
 }
 
 export function getPostBySlug(slug: string): PostMeta | null {
-  const fullPath = path.join(postsDirectory, `${slug}.md`)
-  if (!fs.existsSync(fullPath)) return null
+  const filePaths = getAllPostFiles(postsDirectory)
+  const match = filePaths.find((fp) => path.basename(fp).replace(/\.md$/, '') === slug)
+  if (!match) return null
 
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const fileContents = fs.readFileSync(match, 'utf8')
   const { data, content } = matter(fileContents)
 
   return {
