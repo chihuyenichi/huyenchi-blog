@@ -26,6 +26,27 @@ export default function AboutPage() {
           <li>CTF Competitions</li>
         </ul>
 
+        <h2>How to Post a Writeup</h2>
+        <ol>
+          <li>
+            <strong>Create a Markdown file</strong> in <code>posts/</code> with frontmatter:
+            <pre>{`---
+title: "Challenge Name"
+date: "2025-01-01"
+category: "TryHackMe"
+tags: ["PWN", "ROP"]
+excerpt: "Short description..."
+---`}</pre>
+          </li>
+          <li>
+            <strong>Place images</strong> in <code>public/images/</code> and reference them as
+            <code>{' ![alt](/images/your-file.png)'}</code>
+          </li>
+          <li>
+            <strong>Commit and push</strong> to GitHub — the site auto-deploys.
+          </li>
+        </ol>
+
         <h2>Links</h2>
         <ul>
           <li>
