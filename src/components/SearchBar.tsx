@@ -35,7 +35,7 @@ export default function SearchBar({ posts }: Props) {
       />
       <div className="mt-6 space-y-3">
         {results.map((post) => (
-          <Link key={post.slug} href={`/post/${post.slug}`}>
+          <Link key={post.slug} href={`/post/${encodeURIComponent(post.slug)}`}>
             <article className="border border-border rounded-lg p-4 bg-surface hover:border-accent/40 transition-colors">
               <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
                 <span>{post.date}</span>

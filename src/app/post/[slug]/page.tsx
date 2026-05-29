@@ -60,13 +60,13 @@ export default function PostPage({ params }: { params: { slug: string } }) {
 
       <nav className="flex items-center justify-between mt-12 pt-8 border-t border-border">
         {prev ? (
-          <Link href={`/post/${prev.slug}`} className="group max-w-[45%]">
+          <Link href={`/post/${encodeURIComponent(prev.slug)}`} className="group max-w-[45%]">
             <span className="text-xs text-text-muted">← Previous</span>
             <p className="text-sm text-text-secondary group-hover:text-accent transition-colors line-clamp-1">{prev.title}</p>
           </Link>
         ) : <div />}
         {next ? (
-          <Link href={`/post/${next.slug}`} className="group max-w-[45%] text-right">
+          <Link href={`/post/${encodeURIComponent(next.slug)}`} className="group max-w-[45%] text-right">
             <span className="text-xs text-text-muted">Next →</span>
             <p className="text-sm text-text-secondary group-hover:text-accent transition-colors line-clamp-1">{next.title}</p>
           </Link>

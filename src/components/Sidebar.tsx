@@ -46,7 +46,7 @@ export default function Sidebar() {
           {recentPosts.map((post) => (
             <li key={post.slug}>
               <Link
-                href={`/post/${post.slug}`}
+                href={`/post/${encodeURIComponent(post.slug)}`}
                 className="text-sm text-text-secondary hover:text-accent transition-colors line-clamp-1"
               >
                 {post.title}

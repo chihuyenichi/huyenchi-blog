@@ -14,7 +14,7 @@ export default function PostCard({ post }: { post: PostMeta }) {
           {post.category}
         </Link>
       </div>
-      <Link href={`/post/${post.slug}`}>
+      <Link href={`/post/${encodeURIComponent(post.slug)}`}>
         <h2 className="text-lg font-semibold text-text hover:text-accent transition-colors mb-2">
           {post.title}
         </h2>
