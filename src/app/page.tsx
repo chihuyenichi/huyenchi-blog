@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <section className="mb-10">
-        <h1 className="text-3xl font-bold text-text mb-2">~/writeups</h1>
+        <h1 className="text-3xl font-bold text-text mb-2">HuyenChi-WU</h1>
         <p className="text-text-secondary">CTF writeups and security research notes.</p>
       </section>
 
