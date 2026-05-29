@@ -1,6 +1,6 @@
 ---
 title: "Return-Oriented Programming – Ret2Win (ROP Emporium)"
-date: "2024-01-20"
+date: "2026-05-28"
 category: "TryHackMe"
 tags: ["PWN", "ROP", "Binary Exploitation", "TryHackMe"]
 excerpt: "Solving the split challenge from ROP Emporium using Return-Oriented Programming technique to overwrite the stack and execute call_system with /bin/cat flag.txt."
