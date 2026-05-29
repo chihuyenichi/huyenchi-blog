@@ -11,6 +11,7 @@ export default function Header() {
           <Link href="/" className="text-text-secondary hover:text-text transition-colors">Home</Link>
           <Link href="/search" className="text-text-secondary hover:text-text transition-colors">Search</Link>
           <Link href="/about" className="text-text-secondary hover:text-text transition-colors">About</Link>
+          <Link href="/admin" className="text-text-muted hover:text-text transition-colors text-xs">Admin</Link>
         </nav>
       </div>
     </header>
