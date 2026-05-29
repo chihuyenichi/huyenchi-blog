@@ -7,7 +7,11 @@ export default function PostBody({ content }: { content: string }) {
   const [html, setHtml] = useState('')
 
   useEffect(() => {
-    renderMarkdown(content).then(setHtml)
+    renderMarkdown(content).then((h) => {
+      const base = process.env.NODE_ENV === 'production' ? '/huyenchi-blog' : ''
+      h = h.replace(/<img src="\/(?!\/)/g, `<img src="${base}/`)
+      setHtml(h)
+    })
   }, [content])
 
   return (
