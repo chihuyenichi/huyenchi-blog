@@ -1,6 +1,6 @@
 ---
 title: "Warm-up – THEM CTF 2026"
-date: "2026-05-30"
+date: "2026-06-01"
 category: "THEM-CTF-2026"
 tags: ["PWN", "ROP", "CTF"]
 excerpt: "Solving the warm-up challenge from THEM CTF 2026 using ROP technique to spawn a shell."
