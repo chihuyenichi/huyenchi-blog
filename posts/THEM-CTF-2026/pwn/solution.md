@@ -1,23 +1,31 @@
+---
+title: "Warm-up – THEM CTF 2026"
+date: "2026-05-30"
+category: "THEM-CTF-2026"
+tags: ["PWN", "ROP", "CTF"]
+excerpt: "Solving the warm-up challenge from THEM CTF 2026 using ROP technique to spawn a shell."
+---
+
 # Warm-up (THEM-CTF-2026) 
 
 ## Challenge Overview  
 - We use checksec to overview the binary 
-- <img src="images/check-sec.png" width="600"><br>
+- ![checksec](/images/them-ctf-2026/warm-up/check-sec.png)<br>
 -> we see that `NO PIE`, so address of any function or command in assembly is fixed; And it's the reason we use ROP technique<br>
 - Our goal: Executing `system("/bin/sh")` to spawn shell 
 
 ## Static Analysis 
 - We try to put some different inputs, and we see that we can put a very long input into the buffer -> it's the vulnerability 
-- <img src="images/test-input.png" width="600">
+- ![test-input](/images/them-ctf-2026/warm-up/test-input.png)
 - Next, we will use IDA to analyze the diassembly of this binary
-- <img src="images/ida-main.png" width="600"> : 
+- ![ida-main](/images/them-ctf-2026/warm-up/ida-main.png) : 
     - We note that some function like `puts` named as `IO_puts`, we should check again this binary 
     - > warm_up: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, BuildID[sha1]=763c6a95796cda2157403a14c7c0aaaa80da3d75, for GNU/Linux 3.2.0, not stripped
     - It means that all function are inside the binary, and we have their addresses 
 - Inside `main`, there's `vuln` function called 
-- <img src="images/ida-main.png" width="600"> : 
+- ![ida-main](/images/them-ctf-2026/warm-up/ida-main.png) : 
     - `__libc_read` is called with limit is `0x120` bytes -> The input we can put is very long 
-- <img src="images/ida-main.png" width="600"> :
+- ![ida-main](/images/them-ctf-2026/warm-up/ida-main.png) :
     - See that decompiled C-code, there are some conditions of our input, note this 
 
 ## Process Of Spawning Shell 
