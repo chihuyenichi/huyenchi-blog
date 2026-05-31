@@ -112,7 +112,7 @@ payload += syscall_ret
     - `.bss` entry address : It's where we write our expected string
     - `pop rax`, `pop rdi`, `pop rsi`, `pop rdx` : we need all of them as the parameter of `read` function 
     - `syscall; ret` : Running command 
-- Note that the `payload` (our input) must have length smaller than `0x120` v 
+- Note that the `payload` (our input) must have length smaller than `0x120`
 - All addresses we can find from gadgets got above  
     ```py
     syscall_ret  = p64(0x44ebd9)        # syscall; ret
