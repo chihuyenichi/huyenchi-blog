@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { renderMarkdown } from '@/lib/mdx'
+import { BASE_PATH } from '@/lib/constants'
 
 export default function PostBody({ content }: { content: string }) {
   const [html, setHtml] = useState('')
 
   useEffect(() => {
     renderMarkdown(content).then((h) => {
-      const base = process.env.NODE_ENV === 'production' ? '/huyenchi-blog' : ''
+      const base = process.env.NODE_ENV === 'production' ? BASE_PATH : ''
       h = h.replace(/<img src="\/(?!\/)/g, `<img src="${base}/`)
       setHtml(h)
     })

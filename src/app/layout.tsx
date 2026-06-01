@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants'
 
 export const metadata: Metadata = {
-  title: 'HuyenChi\'s Blog',
-  description: 'CTF writeups and security research',
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
 }
 
 export default function RootLayout({
