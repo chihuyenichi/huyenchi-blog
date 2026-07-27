@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 export function Header() {
-  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || "https://huyenchi-admin.vercel.app";
   return (
     <header className="site-header">
       <div className="shell header-inner">
@@ -14,7 +13,6 @@ export function Header() {
           <Link href="/categories">Categories</Link>
           <Link href="/events">Events</Link>
           <Link href="/archive">Archive</Link>
-          <a href={adminUrl} className="nav-cta">Publish</a>
         </nav>
       </div>
     </header>
