@@ -32,7 +32,7 @@ Mục tiêu không phải là thoát Python sandbox để đọc file hệ thố
 
 ## 2. Tái hiện môi trường và các script có sẵn
 
-Thư mục challenge chứa các script phục vụ từng bước:
+Script solver được lưu tại `resources/bdsecctf-2026-obsidian-gate/solve.py`; các script probe bên dưới thuộc bộ challenge gốc:
 
 | Tệp | Vai trò |
 | --- | --- |
