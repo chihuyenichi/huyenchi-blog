@@ -30,23 +30,26 @@ One expression. One answer.
 
 Mục tiêu không phải là thoát Python sandbox để đọc file hệ thống. Service dùng một expression evaluator tự viết, có whitelist riêng. Hướng đúng là tìm capability đã được expose trong object graph của evaluator.
 
-## 2. Tái hiện môi trường và các script có sẵn
+## 2. Tái hiện môi trường và resource đi kèm
 
-Script solver được lưu tại `resources/bdsecctf-2026-obsidian-gate/solve.py`; các script probe bên dưới thuộc bộ challenge gốc:
+Toàn bộ script và kết quả probe được lưu tại `resources/bdsecctf-2026-obsidian-gate/`. Chạy các lệnh dưới đây từ repository root:
 
 | Tệp | Vai trò |
 | --- | --- |
 | `try_input.py` | Gửi các expression cơ bản, phân loại lỗi và ghi bảng kết quả Markdown. |
-| `callable_probe.py` | Quét các tên function/builtin/hint và các dạng gọi khác nhau. |
 | `name_oracle_probe.py` | Quét tên global bằng các form `name`, `type(name)`, `repr(name)`, `len(name)`, `dir(name)`. |
 | `object_crawler.py` | Duyệt breadth-first object graph bắt đầu từ một expression, dùng `dir(...)` để lấy field. |
 | `solve.py` | Gửi payload cuối, trích flag bằng regex. |
+| `error_list.md` | Kết quả triage expression từ baseline suite. |
+| `name_oracle_high_value.md` | Kết quả probe xác nhận global object `root`. |
+| `object_graph.md` | Kết quả duyệt object graph. |
+| `unveil_call_probe.md` | Kết quả kiểm tra capability `unveil`. |
 
 Kiểm tra syntax các script và chạy payload cuối:
 
 ```bash
-python3 -m py_compile try_input.py callable_probe.py name_oracle_probe.py object_crawler.py solve.py
-python3 solve.py
+python3 -m py_compile resources/bdsecctf-2026-obsidian-gate/try_input.py resources/bdsecctf-2026-obsidian-gate/name_oracle_probe.py resources/bdsecctf-2026-obsidian-gate/object_crawler.py resources/bdsecctf-2026-obsidian-gate/solve.py
+python3 resources/bdsecctf-2026-obsidian-gate/solve.py
 ```
 
 Lưu ý: instance đôi lúc phản hồi chậm. Các script đã đọc prompt bằng non-blocking socket, có timeout và retry. Vì vậy, `no response` trong các file quét ban đầu không đủ để kết luận một primitive hoạt động; các ứng viên quan trọng cần được retest tuần tự với timeout dài hơn.
@@ -56,7 +59,7 @@ Lưu ý: instance đôi lúc phản hồi chậm. Các script đã đọc prompt
 Bắt đầu bằng `try_input.py` với suite cơ bản:
 
 ```bash
-python3 try_input.py --suite baseline --markdown error_list.md
+python3 resources/bdsecctf-2026-obsidian-gate/try_input.py --suite baseline --markdown resources/bdsecctf-2026-obsidian-gate/error_list.md
 ```
 
 Kết quả trong `error_list.md` cho thấy các nhóm sau.
@@ -102,7 +105,7 @@ a       -> GateError: unknown name
 
 ### Các hướng đã loại trừ
 
-`callable_probe.py`, `critical_callable_retest.md` và `direction_results.md` đã retest các hướng thông dụng:
+Suite `functions`, `escape` và `directions` trong `try_input.py` đã retest các hướng thông dụng:
 
 - Đọc file và chạy command: `open`, `read`, `cat`, `system`, `popen`, `run`, `spawn`, ... đều `unknown call`.
 - Python escape: attribute access bị chặn; `getattr`, `eval`, `exec`, `compile`, `__import__`, `globals`, `locals`, `vars` đều không có trong whitelist.
@@ -126,7 +129,7 @@ dir(name)
 Có thể tái hiện phát hiện quan trọng bằng:
 
 ```bash
-python3 name_oracle_probe.py --names root --markdown name_oracle_high_value.md
+python3 resources/bdsecctf-2026-obsidian-gate/name_oracle_probe.py --names root --markdown resources/bdsecctf-2026-obsidian-gate/name_oracle_high_value.md
 ```
 
 Kết quả:
@@ -155,7 +158,7 @@ Key integer bị chặn (`root[0] -> GateError: key denied`), nên danh sách t�
 Script duyệt tự động có thể chạy như sau:
 
 ```bash
-python3 object_crawler.py --start root --max-depth 8 --markdown object_graph.md
+python3 resources/bdsecctf-2026-obsidian-gate/object_crawler.py --start root --max-depth 8 --markdown resources/bdsecctf-2026-obsidian-gate/object_graph.md
 ```
 
 Nó thực hiện, với mỗi node, các probe `value`, `type`, `repr`, `len`, `dir`; nếu `dir` trả một list string thì thêm các child vào hàng đợi BFS. `object_graph.md` ghi lại 34 node và cho thấy các nhánh decoy như `ash`, `mirror`, `dust`, `empty`.
@@ -222,7 +225,7 @@ type(root.observer.right.memory.catalog.index.sealed.unveil)
 -> 'capability'
 ```
 
-`unveil_call_probe.md` xác nhận capability này chỉ nhận zero argument:
+`resources/bdsecctf-2026-obsidian-gate/unveil_call_probe.md` xác nhận capability này chỉ nhận zero argument:
 
 ```text
 root.observer.right.memory.catalog.index.sealed.unveil(0)
@@ -251,7 +254,7 @@ Payload ngắn gọn nhất:
 root.observer.right.memory.catalog.index.sealed.unveil()
 ```
 
-`solve.py` gửi chính payload này, đợi prompt, in response và trích flag với regex `BDSEC\{[^}\n]+\}`.
+`resources/bdsecctf-2026-obsidian-gate/solve.py` gửi chính payload này, đợi prompt, in response và trích flag với regex `BDSEC\{[^}\n]+\}`.
 
 ```text
 BDSEC{0bs1d14n_g4t3_un53al3d_g00d_jOB}
