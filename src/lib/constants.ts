@@ -1,5 +1,0 @@
-export const SITE_NAME = "HuyenChi-WU"
-export const SITE_DESCRIPTION = "CTF writeups and security research"
-export const BASE_PATH = "/huyenchi-blog"
-export const GITHUB_REPO = "chihuyenichi/huyenchi-blog"
-export const GITHUB_USERNAME = "chihuyenichi"

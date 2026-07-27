@@ -1,35 +1,29 @@
 {
-  "name": "writeup-blog",
-  "version": "1.0.0",
+  "name": "cipher-notes",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/huyenchi-blog next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "migrate:legacy": "node scripts/migrate-legacy-content.mjs"
   },
   "dependencies": {
-    "next": "^14.2.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
     "gray-matter": "^4.0.3",
-    "remark": "^15.0.1",
-    "remark-html": "^16.0.1",
-    "remark-gfm": "^4.0.0",
-    "rehype-highlight": "^7.0.0",
-    "date-fns": "^3.6.0",
-    "fuse.js": "^7.0.0"
+    "next": "^16.1.6",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
-    "typescript": "^5.4.0",
-    "tailwindcss": "^3.4.0",
-    "postcss": "^8.4.0",
-    "autoprefixer": "^10.4.0",
-    "@tailwindcss/typography": "^0.5.0",
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^14.2.0"
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "eslint": "^9.26.0",
+    "eslint-config-next": "^16.1.6",
+    "typescript": "^5.8.3"
   }
 }

@@ -1,98 +1,69 @@
-# HuyenChi-WU
+# Cipher Notes
 
-**A personal cybersecurity blog featuring CTF writeups, binary exploitation walkthroughs, and security research notes.**
+CTF writeup blog with a static public site on GitHub Pages and an authenticated publishing workspace on Vercel.
 
-> **Live site:** [https://chihuyenichi.github.io/huyenchi-blog](https://chihuyenichi.github.io/huyenchi-blog)
+## Deployment architecture
 
-Built with Next.js 14 and deployed as a fully static site to GitHub Pages via automated CI/CD — markdown-driven content with zero server dependencies.
+- **Public site:** `https://chihuyenichi.github.io/huyenchi-blog/`
+  - Built from the repository root and deployed by `.github/workflows/deploy-pages.yml`.
+  - Uses only static HTML, CSS, JavaScript, Markdown, and images.
+- **Admin workspace:** deploy the `admin/` directory as a separate Vercel project.
+  - Handles GitHub OAuth, allowlist verification, preview, folder upload, and commits.
+  - Does not expose GitHub credentials to visitors of the public site.
+- **Shared content:** posts and assets are committed to this repository. A publish action creates one commit; GitHub Actions then rebuilds the Pages site.
 
----
+## Repository layout
 
-## Features
-
-- **Markdown-based posts** — Write in plain Markdown with YAML frontmatter; commit and deploy instantly
-- **Category & tag organization** — Browse posts by category or filter by tag
-- **Client-side full-text search** — Powered by Fuse.js for instant search across titles, tags, and excerpts
-- **Syntax-highlighted code blocks** — Using rehype-highlight with a dark theme
-- **Responsive dark theme** — GitHub-dark inspired palette, optimized for reading technical content
-- **Browser-based admin panel** — Upload posts and images directly through the GitHub Contents API
-- **Fully static export** — Deployed to GitHub Pages with no backend or database required
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS + `@tailwindcss/typography` |
-| Content | Markdown + YAML frontmatter |
-| Markdown Rendering | remark, remark-gfm, remark-html |
-| Syntax Highlighting | rehype-highlight |
-| Search | Fuse.js |
-| Deployment | GitHub Pages |
-| CI/CD | GitHub Actions |
-
-The static output is written to the `out/` directory.
-
-## Project Structure
-
-```
-src/
-├── app/             # Next.js App Router pages
-│   ├── page.tsx               # Home — post listing
-│   ├── [category]/            # Category-filtered posts
-│   ├── post/[slug]/           # Individual post page
-│   ├── tags/[tag]/            # Tag-filtered posts
-│   ├── search/                # Search page
-│   ├── about/                 # About page
-│   └── admin/                 # Browser-based post editor
-├── components/      # Reusable UI components
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   ├── Sidebar.tsx
-│   ├── PostCard.tsx
-│   ├── PostBody.tsx
-│   └── SearchBar.tsx
-└── lib/             # Utility modules
-    ├── posts.ts     # Post parsing and querying
-    ├── mdx.ts       # Markdown rendering pipeline
-    └── constants.ts # Site-wide configuration
-
-posts/               # All blog content (Markdown)
-public/images/       # Post images and assets
+```text
+app/                         # Static Next.js public site
+admin/                       # Vercel Next.js admin service
+content/posts/<slug>/
+  index.md                   # Markdown with YAML front matter
+  images/                    # Original post images
+public/images/posts/<slug>/  # Static copies served by GitHub Pages
+.github/workflows/           # GitHub Pages deployment
 ```
 
-## Writing a Post
+## Local public site
 
-1. Create a `.md` file inside `posts/<category>/`
-2. Add YAML frontmatter:
-
-```yaml
----
-title: "Challenge Name"
-date: "2026-01-01"
-category: "TryHackMe"
-tags: ["PWN", "ROP"]
-excerpt: "Short description shown on the homepage."
----
+```sh
+npm install
+npm run dev
 ```
 
-3. Place images in `public/images/` and reference them as `![alt](/images/file.png)`
-4. Commit and push — the site rebuilds automatically via GitHub Actions
+Create a production-equivalent static export:
 
-## Deployment
+```sh
+npm run build:pages
+```
 
-Every push to `main` triggers the [GitHub Actions workflow](.github/workflows/deploy.yml), which:
+The generated GitHub Pages artifact is `out/`.
 
-1. Installs dependencies with `npm ci`
-2. Builds the static site with `npm run build`
-3. Uploads the `out/` directory as a Pages artifact
-4. Deploys to GitHub Pages
+## Vercel admin setup
 
-## Live Site
+1. Create a Vercel project from `chihuyenichi/huyenchi-blog` with **Root Directory** set to `admin`.
+2. Create a GitHub OAuth App. Set its callback URL to `https://<your-vercel-admin-domain>/api/auth/callback`.
+3. In Vercel, configure the variables listed in `admin/.env.example`.
+4. Create a fine-grained GitHub personal access token with **Contents: Read and write** for this repository and set it as `GITHUB_TOKEN` in Vercel only.
+5. Create the repository Actions variable `ADMIN_URL` with the deployed Vercel admin URL. The GitHub Pages workflow injects it as `NEXT_PUBLIC_ADMIN_URL` at build time.
 
-[https://chihuyenichi.github.io/huyenchi-blog](https://chihuyenichi.github.io/huyenchi-blog)
+The admin GitHub allowlist is `ADMIN_GITHUB_LOGINS`; only these accounts can publish.
 
-## License
+## GitHub Pages setup
 
-This project is for personal use. Posts and content are original work unless otherwise attributed.
+In repository **Settings > Pages**, set **Source** to **GitHub Actions**. Every push to `main` then builds and deploys `out/` to:
+
+```text
+https://chihuyenichi.github.io/huyenchi-blog/
+```
+
+## Migrated content
+
+The legacy repository content is normalized into four posts:
+
+- `them-ctf-2026-warm-up`
+- `tryhackme-pwn109`
+- `return-oriented-programming`
+- `cpp-exception-unwinding-exploitation`
+
+All legacy images are retained in the matching post's `content/posts/<slug>/images/` folder and copied to `public/images/posts/<slug>/` for static delivery.
