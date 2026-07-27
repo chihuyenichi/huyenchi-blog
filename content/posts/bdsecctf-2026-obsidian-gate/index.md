@@ -32,18 +32,18 @@ Mục tiêu không phải là thoát Python sandbox để đọc file hệ thố
 
 ## 2. Tái hiện môi trường và resource đi kèm
 
-Toàn bộ script và kết quả probe được lưu tại `resources/bdsecctf-2026-obsidian-gate/`. Chạy các lệnh dưới đây từ repository root:
+Toàn bộ script và kết quả probe được lưu trong [folder resource trên GitHub][resources]. Chạy các lệnh dưới đây từ repository root:
 
 | Tệp | Vai trò |
 | --- | --- |
-| `try_input.py` | Gửi các expression cơ bản, phân loại lỗi và ghi bảng kết quả Markdown. |
-| `name_oracle_probe.py` | Quét tên global bằng các form `name`, `type(name)`, `repr(name)`, `len(name)`, `dir(name)`. |
-| `object_crawler.py` | Duyệt breadth-first object graph bắt đầu từ một expression, dùng `dir(...)` để lấy field. |
-| `solve.py` | Gửi payload cuối, trích flag bằng regex. |
-| `error_list.md` | Kết quả triage expression từ baseline suite. |
-| `name_oracle_high_value.md` | Kết quả probe xác nhận global object `root`. |
-| `object_graph.md` | Kết quả duyệt object graph. |
-| `unveil_call_probe.md` | Kết quả kiểm tra capability `unveil`. |
+| [`try_input.py`][try-input] | Gửi các expression cơ bản, phân loại lỗi và ghi bảng kết quả Markdown. |
+| [`name_oracle_probe.py`][name-oracle] | Quét tên global bằng các form `name`, `type(name)`, `repr(name)`, `len(name)`, `dir(name)`. |
+| [`object_crawler.py`][object-crawler] | Duyệt breadth-first object graph bắt đầu từ một expression, dùng `dir(...)` để lấy field. |
+| [`solve.py`][solver] | Gửi payload cuối, trích flag bằng regex. |
+| [`error_list.md`][error-list] | Kết quả triage expression từ baseline suite. |
+| [`name_oracle_high_value.md`][name-oracle-output] | Kết quả probe xác nhận global object `root`. |
+| [`object_graph.md`][object-graph] | Kết quả duyệt object graph. |
+| [`unveil_call_probe.md`][unveil-probe] | Kết quả kiểm tra capability `unveil`. |
 
 Kiểm tra syntax các script và chạy payload cuối:
 
@@ -56,13 +56,13 @@ Lưu ý: instance đôi lúc phản hồi chậm. Các script đã đọc prompt
 
 ## 3. Triage ngôn ngữ expression
 
-Bắt đầu bằng `try_input.py` với suite cơ bản:
+Bắt đầu bằng [`try_input.py`][try-input] với suite cơ bản:
 
 ```bash
 python3 resources/bdsecctf-2026-obsidian-gate/try_input.py --suite baseline --markdown resources/bdsecctf-2026-obsidian-gate/error_list.md
 ```
 
-Kết quả trong `error_list.md` cho thấy các nhóm sau.
+Kết quả trong [`error_list.md`][error-list] cho thấy các nhóm sau.
 
 ### Phép toán được chấp nhận
 
@@ -105,7 +105,7 @@ a       -> GateError: unknown name
 
 ### Các hướng đã loại trừ
 
-Suite `functions`, `escape` và `directions` trong `try_input.py` đã retest các hướng thông dụng:
+Suite `functions`, `escape` và `directions` trong [`try_input.py`][try-input] đã retest các hướng thông dụng:
 
 - Đọc file và chạy command: `open`, `read`, `cat`, `system`, `popen`, `run`, `spawn`, ... đều `unknown call`.
 - Python escape: attribute access bị chặn; `getattr`, `eval`, `exec`, `compile`, `__import__`, `globals`, `locals`, `vars` đều không có trong whitelist.
@@ -116,7 +116,7 @@ Vì vậy, payload `().__class__.__bases__[0].__subclasses__()` là hướng sai
 
 ## 4. Tìm global object `root`
 
-Sau khi quét function không ra hướng đọc flag, chuyển sang quét global name. Script `name_oracle_probe.py` tạo candidate từ wordlist và thử mỗi tên ở năm dạng:
+Sau khi quét function không ra hướng đọc flag, chuyển sang quét global name. Script [`name_oracle_probe.py`][name-oracle] tạo candidate từ wordlist và thử mỗi tên ở năm dạng:
 
 ```text
 name
@@ -161,7 +161,7 @@ Script duyệt tự động có thể chạy như sau:
 python3 resources/bdsecctf-2026-obsidian-gate/object_crawler.py --start root --max-depth 8 --markdown resources/bdsecctf-2026-obsidian-gate/object_graph.md
 ```
 
-Nó thực hiện, với mỗi node, các probe `value`, `type`, `repr`, `len`, `dir`; nếu `dir` trả một list string thì thêm các child vào hàng đợi BFS. `object_graph.md` ghi lại 34 node và cho thấy các nhánh decoy như `ash`, `mirror`, `dust`, `empty`.
+Nó thực hiện, với mỗi node, các probe `value`, `type`, `repr`, `len`, `dir`; nếu `dir` trả một list string thì thêm các child vào hàng đợi BFS. [`object_graph.md`][object-graph] ghi lại 34 node và cho thấy các nhánh decoy như `ash`, `mirror`, `dust`, `empty`.
 
 Quá trình thủ công theo nhánh phù hợp với hint "sealed archive":
 
@@ -225,7 +225,7 @@ type(root.observer.right.memory.catalog.index.sealed.unveil)
 -> 'capability'
 ```
 
-`resources/bdsecctf-2026-obsidian-gate/unveil_call_probe.md` xác nhận capability này chỉ nhận zero argument:
+[`unveil_call_probe.md`][unveil-probe] xác nhận capability này chỉ nhận zero argument:
 
 ```text
 root.observer.right.memory.catalog.index.sealed.unveil(0)
@@ -254,7 +254,7 @@ Payload ngắn gọn nhất:
 root.observer.right.memory.catalog.index.sealed.unveil()
 ```
 
-`resources/bdsecctf-2026-obsidian-gate/solve.py` gửi chính payload này, đợi prompt, in response và trích flag với regex `BDSEC\{[^}\n]+\}`.
+[`solve.py`][solver] gửi chính payload này, đợi prompt, in response và trích flag với regex `BDSEC\{[^}\n]+\}`.
 
 ```text
 BDSEC{0bs1d14n_g4t3_un53al3d_g00d_jOB}
@@ -263,3 +263,13 @@ BDSEC{0bs1d14n_g4t3_un53al3d_g00d_jOB}
 ## 8. Kết luận kỹ thuật
 
 Lỗi thiết kế của service là expose `root` trong global environment, cho phép `dir(object)` liệt kê field, và cho phép truy cập field/call capability theo kết quả enumerate. Dù evaluator chặn gần như toàn bộ Python builtin và attribute escape, chuỗi primitive này vẫn đủ để duyệt đến sealed archive và gọi capability làm lộ flag.
+
+[resources]: https://github.com/chihuyenichi/huyenchi-blog/tree/main/resources/bdsecctf-2026-obsidian-gate
+[try-input]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/try_input.py
+[name-oracle]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/name_oracle_probe.py
+[object-crawler]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/object_crawler.py
+[solver]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/solve.py
+[error-list]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/error_list.md
+[name-oracle-output]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/name_oracle_high_value.md
+[object-graph]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/object_graph.md
+[unveil-probe]: https://github.com/chihuyenichi/huyenchi-blog/blob/main/resources/bdsecctf-2026-obsidian-gate/unveil_call_probe.md
