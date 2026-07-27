@@ -1,12 +1,12 @@
 import Link from "next/link";
 import type { Post } from "@/lib/content";
-import { displayCategory, getImageUrl } from "@/lib/content";
+import { displayCategory, getSiteBackground } from "@/lib/content";
 
 export function PostCard({ post }: { post: Post }) {
   return (
     <article className="post-card">
-      <Link className="card-image" href={`/writeups/${post.slug}`} aria-label={post.title}>
-        {post.coverImage ? <img src={getImageUrl(post, post.coverImage)} alt="" /> : <span className="card-image-fallback">{post.category}</span>}
+      <Link className="card-image site-image-bg" href={`/writeups/${post.slug}`} aria-label={post.title} style={{ backgroundImage: `url(${getSiteBackground(post.slug)})` }}>
+        <span className="card-image-label">{post.category}</span>
       </Link>
       <div className="post-card-body">
         <p className="eyebrow">{new Intl.DateTimeFormat("en", { month: "long", day: "numeric", year: "numeric" }).format(new Date(post.date))}</p>

@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { CopyLinkScript } from "@/components/copy-link";
 import { PostCard } from "@/components/post-card";
-import { displayCategory, getAllPosts, getImageUrl, getPost, getRelatedPosts, getRenderedMarkdown } from "@/lib/content";
+import { displayCategory, getAllPosts, getPost, getRelatedPosts, getRenderedMarkdown, getSiteBackground } from "@/lib/content";
 
 export async function generateStaticParams() { return getAllPosts().map((post) => ({ slug: post.slug })); }
 
@@ -22,7 +22,7 @@ export default async function WriteupPage({ params }: { params: Promise<{ slug: 
   const related = getRelatedPosts(post);
   const links = [...(post.sourceUrl ? [{ label: "Challenge", url: post.sourceUrl }] : []), ...(post.quickLinks ?? [])];
   return <article className="writeup"><CopyLinkScript />
-    {post.coverImage && <div className="article-hero"><img src={getImageUrl(post, post.coverImage)} alt="" /></div>}
+    <div className="article-hero site-image-bg" style={{ backgroundImage: `url(${getSiteBackground(post.slug)})` }} aria-hidden="true" />
     <div className="shell article-shell">
       <p className="crumb">Home / Writeups / {post.title}</p>
       <header className="article-header"><div className="tag-row"><Link href={`/categories/${post.category}`}>{displayCategory(post.category)}</Link><span>{post.difficulty}</span></div><h1>{post.title}</h1><p className="dek">{post.description}</p><div className="byline"><time dateTime={post.date}>{new Intl.DateTimeFormat("en", { month: "long", day: "numeric", year: "numeric" }).format(new Date(post.date))}</time><span>{post.author}</span><span>{post.event}</span></div></header>

@@ -62,6 +62,20 @@ export function getImageUrl(post: Post, image?: string) {
   return image.startsWith("./images/") ? `${basePath}/images/posts/${post.slug}/${image.slice("./images/".length)}` : image;
 }
 
+const siteBackgrounds = [
+  "28154fba3177d061236df077ddc2b5bb.jpg",
+  "3d9ee049570adee9294162068af3231c.jpg",
+  "55a40a9f575653805b6023272a68f5a2.jpg",
+  "84041ad53096cb4b4be10ab0694717a5.jpg",
+  "b183b20cef2492d9cb216770b62cc3c7.jpg",
+  "c8bf695468ac459bb21e2e7f95d9ddd4.jpg",
+];
+
+export function getSiteBackground(seed: string) {
+  const index = [...seed].reduce((total, character) => total + character.charCodeAt(0), 0) % siteBackgrounds.length;
+  return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/images-2/${siteBackgrounds[index]}`;
+}
+
 export function getRenderedMarkdown(post: Post) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return post.content.replace(/\]\(\.\/images\//g, `](${basePath}/images/posts/${post.slug}/`);
