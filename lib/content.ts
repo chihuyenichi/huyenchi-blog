@@ -67,7 +67,6 @@ const siteBackgrounds = [
   "242c731e1f4e7c4962f6c027593cc311.jpg",
   "816dfcb5351715765bb4d8a8d8836196.jpg",
   "db57438697d6e2cf9b1ce37d6917962a.jpg",
-  "download.jpg",
   "f4a540fcfe18d227a075f6287c56be06.jpg",
 ];
 
