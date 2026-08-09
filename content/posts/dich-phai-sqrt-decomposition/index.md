@@ -26,6 +26,10 @@ Ta có mảng `a` gồm `n` phần tử, cần xử lý `q` truy vấn online:
 - `n, q` đều lên tới `10^5`, nên mô phỏng trực tiếp từng truy vấn sẽ quá chậm.
 - Dữ liệu vào được mã hóa bằng `lastans`, nên không thể xử lý offline.
 
+Source code tham chiếu:
+
+- [Xem file `3.cpp`](/dich-phai-sqrt-decomposition/3.cpp)
+
 ## Ý tưởng chính từ code
 
 File [3.cpp](/run/media/taing21/HuyenChi/daohuyenchi_server/Programming/c-linux/3/3.cpp) giải bài này bằng cách kết hợp hai lớp dữ liệu:
