@@ -28,7 +28,7 @@ Ta có mảng `a` gồm `n` phần tử, cần xử lý `q` truy vấn online:
 
 Source code tham chiếu:
 
-- [Xem file `3.cpp`](/dich-phai-sqrt-decomposition/3.cpp)
+- [Xem file `solve.cpp`](../../dich-phai-sqrt-decomposition/solve.cpp)
 
 ## Ý tưởng chính từ code
 
