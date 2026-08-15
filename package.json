@@ -8,7 +8,8 @@
     "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/huyenchi-blog next build",
     "start": "next start",
     "lint": "eslint .",
-    "migrate:legacy": "node scripts/migrate-legacy-content.mjs"
+    "migrate:legacy": "node scripts/migrate-legacy-content.mjs",
+    "publish:post": "python3 scripts/publish_post.py"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
