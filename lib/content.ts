@@ -79,5 +79,6 @@ export function getRenderedMarkdown(post: Post) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return post.content
     .replace(/\]\(\.\/images\//g, `](${basePath}/images/posts/${post.slug}/`)
-    .replace(/\]\(\/(?!\/)/g, `](${basePath}/`);
+    .replace(/\]\(\/(?!\/)/g, `](${basePath}/`)
+    .replace(/^(\[[^\]]+\]:\s*)\/(?!\/)/gm, `$1${basePath}/`);
 }
