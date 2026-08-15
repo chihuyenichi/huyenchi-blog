@@ -77,5 +77,7 @@ export function getSiteBackground(seed: string) {
 
 export function getRenderedMarkdown(post: Post) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  return post.content.replace(/\]\(\.\/images\//g, `](${basePath}/images/posts/${post.slug}/`);
+  return post.content
+    .replace(/\]\(\.\/images\//g, `](${basePath}/images/posts/${post.slug}/`)
+    .replace(/\]\(\/(?!\/)/g, `](${basePath}/`);
 }

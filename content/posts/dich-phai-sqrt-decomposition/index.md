@@ -28,11 +28,11 @@ Ta có mảng `a` gồm `n` phần tử, cần xử lý `q` truy vấn online:
 
 Source code tham chiếu:
 
-- [Xem file `solve.cpp`](../../dich-phai-sqrt-decomposition/solve.cpp)
+- [Xem file `solve.cpp`](/dich-phai-sqrt-decomposition/solve.cpp)
 
 ## Ý tưởng chính từ code
 
-File [3.cpp](/run/media/taing21/HuyenChi/daohuyenchi_server/Programming/c-linux/3/3.cpp) giải bài này bằng cách kết hợp hai lớp dữ liệu:
+Code tham chiếu trong bài là file `3.cpp`, được publish kèm bài viết dưới tên [`solve.cpp`](/dich-phai-sqrt-decomposition/solve.cpp). Lời giải kết hợp hai lớp dữ liệu:
 
 - `sqrt decomposition`: chia mảng theo block cỡ khoảng `500`.
 - `linked list`: lưu thứ tự hiện tại của các phần tử để xoay đoạn mà không phải dời cả mảng.

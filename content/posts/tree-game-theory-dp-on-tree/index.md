@@ -30,7 +30,7 @@ Daniel không nhìn thấy vị trí hiện tại của đồng xu, nhưng biế
 
 Source code tham chiếu:
 
-- [Xem file `solve.cpp`](../../tree-game-theory-dp-on-tree/solve.cpp)
+- [Xem file `solve.cpp`](/tree-game-theory-dp-on-tree/solve.cpp)
 
 ## Nhận xét quan trọng
 
