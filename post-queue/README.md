@@ -155,13 +155,13 @@ Publish và build:
 npm run publish:post -- <slug> --build
 ```
 
-Publish, build, commit:
+Publish và commit:
 
 ```bash
 npm run publish:post -- <slug> --commit
 ```
 
-Publish, build, commit, push lên GitHub:
+Publish, commit, push lên GitHub:
 
 ```bash
 npm run publish:post -- <slug> --push
@@ -177,6 +177,7 @@ Có thể kết hợp:
 
 ```bash
 npm run publish:post -- <slug> --overwrite --build
+npm run publish:post -- <slug> --overwrite --build --push
 ```
 
 ## Quy Trình Khuyến Nghị
@@ -199,13 +200,13 @@ post-queue/<slug>/
 npm run publish:post -- <slug> --dry-run
 ```
 
-6. Publish và build:
+6. Nếu muốn kiểm tra build local trước khi commit:
 
 ```bash
 npm run publish:post -- <slug> --build
 ```
 
-7. Nếu build pass, commit và push:
+7. Commit và push:
 
 ```bash
 git add content/posts/<slug> public/images/posts/<slug> public/<slug>
@@ -218,3 +219,5 @@ Hoặc dùng script làm hết:
 ```bash
 npm run publish:post -- <slug> --push
 ```
+
+Lưu ý: `--push` không tự chạy build local. GitHub Actions sẽ build và deploy sau khi commit được push lên `main`. Nếu muốn build trên máy trước khi push, dùng thêm `--build`.

@@ -153,8 +153,8 @@ def main() -> int:
     parser.add_argument("slug", help="Post slug. Must match post-queue/<slug>.")
     parser.add_argument("--overwrite", action="store_true", help="Replace existing target folders for this slug.")
     parser.add_argument("--dry-run", action="store_true", help="Show planned file operations without changing files.")
-    parser.add_argument("--build", action="store_true", help="Run npm run build:pages after copying files.")
-    parser.add_argument("--commit", action="store_true", help="Create a git commit after a successful publish/build.")
+    parser.add_argument("--build", action="store_true", help="Run npm run build:pages before committing.")
+    parser.add_argument("--commit", action="store_true", help="Create a git commit after publishing files.")
     parser.add_argument("--push", action="store_true", help="Push HEAD to GitHub main. Implies --commit.")
     args = parser.parse_args()
 
@@ -164,7 +164,7 @@ def main() -> int:
 
     publish(args.slug, overwrite=args.overwrite, dry_run=args.dry_run)
 
-    if args.build or commit:
+    if args.build:
         run(["npm", "run", "build:pages"], dry_run=False)
 
     if commit:
