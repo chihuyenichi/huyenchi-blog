@@ -1,10 +1,10 @@
-# Post Queue Guide
+# Hướng Dẫn Sử Dụng Post Queue
 
-`post-queue/` la noi chuan bi bai viet moi truoc khi publish vao website.
+`post-queue/` là nơi chuẩn bị bài viết mới trước khi publish vào website.
 
-Moi bai viet la mot folder con, ten folder chinh la `slug` cua bai.
+Mỗi bài viết là một folder con. Tên folder chính là `slug` của bài viết.
 
-Vi du:
+Ví dụ:
 
 ```text
 post-queue/tree-walk-coloring-dp/
@@ -13,30 +13,30 @@ post-queue/tree-walk-coloring-dp/
   resources/
 ```
 
-## Cau Truc
+## Cấu Trúc
 
-### Bat buoc
+### Bắt buộc
 
-Moi queue folder bat buoc co:
+Mỗi queue folder bắt buộc có:
 
 ```text
 post-queue/<slug>/index.md
 ```
 
-`index.md` la noi dung bai post, gom front matter va Markdown.
+`index.md` là nội dung bài post, gồm front matter và Markdown.
 
-### Tuy chon
+### Tùy chọn
 
-Co the co them:
+Có thể có thêm:
 
 ```text
 post-queue/<slug>/images/
 post-queue/<slug>/resources/
 ```
 
-Hai folder nay co the rong.
+Hai folder này có thể để trống.
 
-Khong dat file hoac folder ten khac trong `post-queue/<slug>/`. Script chi chap nhan:
+Không đặt file hoặc folder tên khác trong `post-queue/<slug>/`. Script chỉ chấp nhận:
 
 ```text
 index.md
@@ -46,13 +46,13 @@ resources
 
 ## Mapping Khi Publish
 
-Khi chay script:
+Khi chạy script:
 
 ```bash
 npm run publish:post -- <slug>
 ```
 
-File se duoc copy nhu sau:
+File sẽ được copy như sau:
 
 ```text
 post-queue/<slug>/index.md
@@ -66,7 +66,7 @@ post-queue/<slug>/resources/*
 -> public/<slug>/*
 ```
 
-Neu `images/` khong co file nao, script se tao:
+Nếu `images/` không có file nào, script sẽ tạo:
 
 ```text
 content/posts/<slug>/images/.gitkeep
@@ -74,15 +74,15 @@ content/posts/<slug>/images/.gitkeep
 
 ## Link Trong Markdown
 
-### Anh
+### Ảnh
 
-Dat anh trong:
+Đặt ảnh trong:
 
 ```text
 post-queue/<slug>/images/diagram.png
 ```
 
-Dung link trong `index.md`:
+Dùng link trong `index.md`:
 
 ```md
 ![Diagram](./images/diagram.png)
@@ -90,32 +90,32 @@ Dung link trong `index.md`:
 
 ### Resources
 
-Dat file trong:
+Đặt file trong:
 
 ```text
 post-queue/<slug>/resources/solve.cpp
 ```
 
-Dung link trong `index.md`:
+Dùng link trong `index.md`:
 
 ```md
 - [Source code](/<slug>/solve.cpp)
 ```
 
-Sau deploy, URL se co dang:
+Sau khi deploy, URL sẽ có dạng:
 
 ```text
 https://chihuyenichi.github.io/huyenchi-blog/<slug>/solve.cpp
 ```
 
-## Front Matter Mau
+## Front Matter Mẫu
 
 ```md
 ---
-title: "Tieu de bai viet"
+title: "Tiêu đề bài viết"
 slug: "<slug>"
 date: "2026-08-15"
-description: "Mo ta ngan cua bai viet."
+description: "Mô tả ngắn của bài viết."
 category: "misc"
 event: "Competitive Programming Notes"
 year: 2026
@@ -129,27 +129,27 @@ status: "published"
 ---
 ```
 
-`slug` trong front matter nen trung voi ten folder:
+`slug` trong front matter nên trùng với tên folder:
 
 ```text
 post-queue/<slug>/
 ```
 
-## Lenh Thuong Dung
+## Lệnh Thường Dùng
 
-Kiem tra script se lam gi, khong ghi file:
+Kiểm tra script sẽ làm gì, không ghi file:
 
 ```bash
 npm run publish:post -- <slug> --dry-run
 ```
 
-Publish vao local:
+Publish vào local:
 
 ```bash
 npm run publish:post -- <slug>
 ```
 
-Publish va build:
+Publish và build:
 
 ```bash
 npm run publish:post -- <slug> --build
@@ -161,51 +161,51 @@ Publish, build, commit:
 npm run publish:post -- <slug> --commit
 ```
 
-Publish, build, commit, push len GitHub:
+Publish, build, commit, push lên GitHub:
 
 ```bash
 npm run publish:post -- <slug> --push
 ```
 
-Neu post da ton tai va muon thay the:
+Nếu post đã tồn tại và muốn thay thế:
 
 ```bash
 npm run publish:post -- <slug> --overwrite
 ```
 
-Co the ket hop:
+Có thể kết hợp:
 
 ```bash
 npm run publish:post -- <slug> --overwrite --build
 ```
 
-## Quy Trinh Khuyen Dung
+## Quy Trình Khuyến Nghị
 
-1. Tao folder:
+1. Tạo folder:
 
 ```text
 post-queue/<slug>/
 ```
 
-2. Them `index.md`.
+2. Thêm `index.md`.
 
-3. Neu co anh, dat vao `images/`.
+3. Nếu có ảnh, đặt vào `images/`.
 
-4. Neu co source code, statement, testcase, zip challenge, dat vao `resources/`.
+4. Nếu có source code, statement, testcase, zip challenge, đặt vào `resources/`.
 
-5. Chay dry-run:
+5. Chạy dry-run:
 
 ```bash
 npm run publish:post -- <slug> --dry-run
 ```
 
-6. Publish va build:
+6. Publish và build:
 
 ```bash
 npm run publish:post -- <slug> --build
 ```
 
-7. Neu build pass, commit va push:
+7. Nếu build pass, commit và push:
 
 ```bash
 git add content/posts/<slug> public/images/posts/<slug> public/<slug>
@@ -213,7 +213,7 @@ git commit -m "content: publish <slug>"
 git push
 ```
 
-Hoac dung script lam het:
+Hoặc dùng script làm hết:
 
 ```bash
 npm run publish:post -- <slug> --push
