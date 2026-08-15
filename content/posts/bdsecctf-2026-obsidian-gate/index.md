@@ -48,8 +48,8 @@ Toàn bộ script và kết quả probe được lưu trong [folder resource tr�
 Kiểm tra syntax các script và chạy payload cuối:
 
 ```bash
-python3 -m py_compile public/resources/bdsecctf-2026-obsidian-gate/try_input.py public/resources/bdsecctf-2026-obsidian-gate/name_oracle_probe.py public/resources/bdsecctf-2026-obsidian-gate/object_crawler.py public/resources/bdsecctf-2026-obsidian-gate/solve.py
-python3 public/resources/bdsecctf-2026-obsidian-gate/solve.py
+python3 -m py_compile public/bdsecctf-2026-obsidian-gate/try_input.py public/bdsecctf-2026-obsidian-gate/name_oracle_probe.py public/bdsecctf-2026-obsidian-gate/object_crawler.py public/bdsecctf-2026-obsidian-gate/solve.py
+python3 public/bdsecctf-2026-obsidian-gate/solve.py
 ```
 
 Lưu ý: instance đôi lúc phản hồi chậm. Các script đã đọc prompt bằng non-blocking socket, có timeout và retry. Vì vậy, `no response` trong các file quét ban đầu không đủ để kết luận một primitive hoạt động; các ứng viên quan trọng cần được retest tuần tự với timeout dài hơn.
@@ -59,7 +59,7 @@ Lưu ý: instance đôi lúc phản hồi chậm. Các script đã đọc prompt
 Bắt đầu bằng [`try_input.py`][try-input] với suite cơ bản:
 
 ```bash
-python3 public/resources/bdsecctf-2026-obsidian-gate/try_input.py --suite baseline --markdown public/resources/bdsecctf-2026-obsidian-gate/error_list.md
+python3 public/bdsecctf-2026-obsidian-gate/try_input.py --suite baseline --markdown public/bdsecctf-2026-obsidian-gate/error_list.md
 ```
 
 Kết quả trong [`error_list.md`][error-list] cho thấy các nhóm sau.
@@ -129,7 +129,7 @@ dir(name)
 Có thể tái hiện phát hiện quan trọng bằng:
 
 ```bash
-python3 public/resources/bdsecctf-2026-obsidian-gate/name_oracle_probe.py --names root --markdown public/resources/bdsecctf-2026-obsidian-gate/name_oracle_high_value.md
+python3 public/bdsecctf-2026-obsidian-gate/name_oracle_probe.py --names root --markdown public/bdsecctf-2026-obsidian-gate/name_oracle_high_value.md
 ```
 
 Kết quả:
@@ -158,7 +158,7 @@ Key integer bị chặn (`root[0] -> GateError: key denied`), nên danh sách t�
 Script duyệt tự động có thể chạy như sau:
 
 ```bash
-python3 public/resources/bdsecctf-2026-obsidian-gate/object_crawler.py --start root --max-depth 8 --markdown public/resources/bdsecctf-2026-obsidian-gate/object_graph.md
+python3 public/bdsecctf-2026-obsidian-gate/object_crawler.py --start root --max-depth 8 --markdown public/bdsecctf-2026-obsidian-gate/object_graph.md
 ```
 
 Nó thực hiện, với mỗi node, các probe `value`, `type`, `repr`, `len`, `dir`; nếu `dir` trả một list string thì thêm các child vào hàng đợi BFS. [`object_graph.md`][object-graph] ghi lại 34 node và cho thấy các nhánh decoy như `ash`, `mirror`, `dust`, `empty`.
@@ -264,12 +264,12 @@ BDSEC{0bs1d14n_g4t3_un53al3d_g00d_jOB}
 
 Lỗi thiết kế của service là expose `root` trong global environment, cho phép `dir(object)` liệt kê field, và cho phép truy cập field/call capability theo kết quả enumerate. Dù evaluator chặn gần như toàn bộ Python builtin và attribute escape, chuỗi primitive này vẫn đủ để duyệt đến sealed archive và gọi capability làm lộ flag.
 
-[resources]: https://github.com/chihuyenichi/huyenchi-blog/tree/main/public/resources/bdsecctf-2026-obsidian-gate
-[try-input]: /resources/bdsecctf-2026-obsidian-gate/try_input.py
-[name-oracle]: /resources/bdsecctf-2026-obsidian-gate/name_oracle_probe.py
-[object-crawler]: /resources/bdsecctf-2026-obsidian-gate/object_crawler.py
-[solver]: /resources/bdsecctf-2026-obsidian-gate/solve.py
-[error-list]: /resources/bdsecctf-2026-obsidian-gate/error_list.md
-[name-oracle-output]: /resources/bdsecctf-2026-obsidian-gate/name_oracle_high_value.md
-[object-graph]: /resources/bdsecctf-2026-obsidian-gate/object_graph.md
-[unveil-probe]: /resources/bdsecctf-2026-obsidian-gate/unveil_call_probe.md
+[resources]: https://github.com/chihuyenichi/huyenchi-blog/tree/main/public/bdsecctf-2026-obsidian-gate
+[try-input]: /bdsecctf-2026-obsidian-gate/try_input.py
+[name-oracle]: /bdsecctf-2026-obsidian-gate/name_oracle_probe.py
+[object-crawler]: /bdsecctf-2026-obsidian-gate/object_crawler.py
+[solver]: /bdsecctf-2026-obsidian-gate/solve.py
+[error-list]: /bdsecctf-2026-obsidian-gate/error_list.md
+[name-oracle-output]: /bdsecctf-2026-obsidian-gate/name_oracle_high_value.md
+[object-graph]: /bdsecctf-2026-obsidian-gate/object_graph.md
+[unveil-probe]: /bdsecctf-2026-obsidian-gate/unveil_call_probe.md
