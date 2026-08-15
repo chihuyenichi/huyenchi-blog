@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
