@@ -104,7 +104,7 @@ $$
 Kết hợp với `2visit_u = D_u + h_u`, ta được điều kiện cục bộ tại mỗi đỉnh:
 
 $$
-\boxed{D_u+h_u\equiv 2b_u\pmod 4.}
+D_u+h_u\equiv 2b_u\pmod 4.
 $$
 
 Toàn bộ DP bên dưới chỉ nhằm chọn các `c_e` và các `h_u` sao cho mọi đỉnh đều thỏa phương trình này.
@@ -250,14 +250,12 @@ $$
 Với trạng thái hiện tại `dp_pre[x][y]`, chuyển sang:
 
 $$
-\boxed{
 dp\_cur[(x+c)\bmod 4][y+y_2]
 =
 \min\left(
 dp\_cur[(x+c)\bmod 4][y+y_2],
 dp\_pre[x][y]+c+dp[v][c\bmod 4][y_2]
 \right).
-}
 $$
 
 Điều kiện:
@@ -295,7 +293,7 @@ Giả sử các cạnh xuống con đóng góp phần dư `x`, số endpoint tro
 Điều kiện tại đỉnh `u` là:
 
 $$
-\boxed{x+x2+y_u\equiv 2b_u\pmod 4.}
+x+x2+y_u\equiv 2b_u\pmod 4.
 $$
 
 Vì vậy code tính trực tiếp `x2`:
@@ -307,11 +305,9 @@ int x2 = (-(x + y_u - 2 * a[u]) % 4 + 4) % 4;
 Nếu `y + y_u <= 2`, cập nhật:
 
 $$
-\boxed{
 dp[u][x2][y+y_u]
 =
 \min(dp[u][x2][y+y_u], dp\_pre[x][y]).
-}
 $$
 
 Đây là bước đảm bảo phương trình màu tại chính đỉnh `u`.
@@ -350,7 +346,7 @@ $$
 Số đỉnh trong walk bằng số cạnh được dùng cộng `1`, nên đáp án là:
 
 $$
-\boxed{dp[R][0][2]+1.}
+dp[R][0][2]+1.
 $$
 
 Trong code:

@@ -96,7 +96,7 @@ $$
 Kết hợp hai công thức, ta thu được điều kiện cục bộ tại mỗi đỉnh:
 
 $$
-\boxed{D_u+h_u\equiv 2b_u\pmod 4.}
+D_u+h_u\equiv 2b_u\pmod 4.
 $$
 
 Đây là phương trình mà DP phải đảm bảo cho từng đỉnh.
@@ -202,14 +202,12 @@ là số endpoint role trong `T_v`.
 Chuyển trạng thái:
 
 $$
-\boxed{
 dp\_cur[(x+c)\bmod 4][y+y_2]
 =
 \min\left(
 dp\_cur[(x+c)\bmod 4][y+y_2],
 dp\_pre[x][y]+c+dp[v][c\bmod 4][y_2]
 \right).
-}
 $$
 
 Điều kiện:
@@ -241,7 +239,7 @@ $$
 Giả sử các cạnh xuống con đóng góp phần dư `x`, cạnh cha cần phần dư `x2`, thì điều kiện tại `u` là:
 
 $$
-\boxed{x+x2+y_u\equiv 2b_u\pmod 4.}
+x+x2+y_u\equiv 2b_u\pmod 4.
 $$
 
 Code tính trực tiếp:
@@ -276,7 +274,7 @@ $$
 Số đỉnh của walk bằng số cạnh được dùng cộng `1`, nên đáp án là:
 
 $$
-\boxed{dp[R][0][2]+1.}
+dp[R][0][2]+1.
 $$
 
 ## Độ phức tạp
