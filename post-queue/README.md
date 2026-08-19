@@ -137,45 +137,90 @@ post-queue/<slug>/
 
 ## Lệnh Thường Dùng
 
-Kiểm tra script sẽ làm gì, không ghi file:
+### Kiểm tra trước khi publish
+
+Chỉ xem script sẽ làm gì, không ghi file:
 
 ```bash
 npm run publish:post -- <slug> --dry-run
 ```
 
-Publish vào local:
+### Publish vào local
 
 ```bash
 npm run publish:post -- <slug>
 ```
 
-Publish và build:
+Lệnh này chỉ copy file từ `post-queue/<slug>/` sang đúng vị trí trong `content/` và `public/`. Lệnh này không commit, không push.
+
+### Publish và build local
 
 ```bash
 npm run publish:post -- <slug> --build
 ```
 
-Publish và commit:
+Lệnh này copy file rồi chạy:
+
+```bash
+npm run build:pages
+```
+
+Dùng khi muốn kiểm tra web có build được trên máy trước khi commit/push.
+
+### Publish và commit
 
 ```bash
 npm run publish:post -- <slug> --commit
 ```
 
-Publish, commit, push lên GitHub:
+Lệnh này copy file rồi tạo commit:
+
+```bash
+git commit -m "content: publish <slug>"
+```
+
+Lệnh này không build local.
+
+### Publish, commit và push lên GitHub
 
 ```bash
 npm run publish:post -- <slug> --push
 ```
 
-Nếu post đã tồn tại và muốn thay thế:
+Lệnh này copy file, tạo commit, rồi push lên GitHub bằng SSH:
+
+```bash
+git push git@github.com:chihuyenichi/huyenchi-blog.git HEAD:main
+```
+
+Lệnh này không build local. Sau khi push, GitHub Actions sẽ tự chạy `npm run build:pages` và deploy GitHub Pages.
+
+### Publish, build, commit và push
+
+Nếu muốn kiểm tra build local trước khi commit/push:
+
+```bash
+npm run publish:post -- <slug> --build --push
+```
+
+### Ghi đè post đã tồn tại
+
+Nếu target đã tồn tại, script sẽ báo lỗi để tránh ghi đè nhầm:
+
+```text
+Target already exists: content/posts/<slug>, public/<slug>. Use --overwrite to replace.
+```
+
+Muốn thay thế nội dung cũ:
 
 ```bash
 npm run publish:post -- <slug> --overwrite
 ```
 
-Có thể kết hợp:
+Các lệnh overwrite thường dùng:
 
 ```bash
+npm run publish:post -- <slug> --overwrite --push
 npm run publish:post -- <slug> --overwrite --build
 npm run publish:post -- <slug> --overwrite --build --push
 ```
@@ -200,21 +245,25 @@ post-queue/<slug>/
 npm run publish:post -- <slug> --dry-run
 ```
 
-6. Nếu muốn kiểm tra build local trước khi commit:
+6. Nếu chỉ muốn publish local để xem trước:
 
 ```bash
-npm run publish:post -- <slug> --build
+npm run publish:post -- <slug>
 ```
 
-7. Commit và push:
+7. Nếu muốn kiểm tra build local:
 
 ```bash
-git add content/posts/<slug> public/images/posts/<slug> public/<slug>
-git commit -m "content: publish <slug>"
-git push
+npm run publish:post -- <slug> --overwrite --build
 ```
 
-Hoặc dùng script làm hết:
+8. Khi muốn đưa lên GitHub:
+
+```bash
+npm run publish:post -- <slug> --overwrite --push
+```
+
+Nếu đây là lần publish đầu tiên và target chưa tồn tại, có thể bỏ `--overwrite`:
 
 ```bash
 npm run publish:post -- <slug> --push
