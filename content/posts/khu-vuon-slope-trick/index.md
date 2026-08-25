@@ -1,7 +1,7 @@
 ---
 title: "Khu vườn - Slope trick cho DP lồi"
 slug: "khu-vuon-slope-trick"
-date: "2026-08-25"
+date: "2026-08-26"
 description: "Phân tích bài Khu vườn bằng quy hoạch động trên đường thẳng, biểu diễn hàm chi phí lồi bằng slope trick và hai tập breakpoint."
 category: "misc"
 event: "Competitive Programming Notes"
@@ -18,14 +18,36 @@ status: "published"
 
 ## Tài liệu tham chiếu
 
-- [Đề bài `statement.md`](/khu-vuon-slope-trick/statement.md)
 - [Source code `solve.cpp`](/khu-vuon-slope-trick/solve.cpp)
+- [Đề bài `statement.md`](/khu-vuon-slope-trick/statement.md)
 
-![Statement](./images/statement.png)
+# Lời giải bài toán cân bằng đất trên một dãy bồn hoa
 
-# Câu 3 - Khu vườn
+## Tóm tắt đề bài
 
-## 1. Ý chính của bài
+Có `N` bồn hoa xếp trên một hàng. Bồn `i` ban đầu có `A[i]` đơn vị đất và cần đúng `B[i]` đơn vị đất.
+
+Ta được phép thực hiện ba loại thao tác:
+
+- mua thêm 1 đơn vị đất cho một bồn bất kỳ với chi phí `X`;
+- bỏ đi 1 đơn vị đất từ một bồn bất kỳ với chi phí `Y`;
+- chuyển 1 đơn vị đất từ bồn `i` sang bồn `j` với chi phí `Z * |i - j|`.
+
+Mục tiêu là tìm tổng chi phí nhỏ nhất để mọi bồn đều đạt đúng lượng đất yêu cầu.
+
+## Mục lục
+
+1. [Mô hình hóa bài toán](#1-mo-hinh-hoa-bai-toan)
+2. [DP cơ bản](#2-dp-co-ban)
+3. [Nhận xét hình học về `F[i]`](#3-nhan-xet-hinh-hoc-ve-fi)
+4. [Định nghĩa các breakpoint và cấu trúc lưu](#4-dinh-nghia-cac-breakpoint-va-cau-truc-luu)
+5. [Ba thao tác khi xử lý mỗi bồn](#5-ba-thao-tac-khi-xu-ly-moi-bon)
+6. [Khởi tạo](#6-khoi-tao)
+7. [Lấy giá trị hàm tại một điểm](#7-lay-gia-tri-ham-tai-mot-diem)
+8. [Độ phức tạp](#8-do-phuc-tap)
+9. [Tóm tắt ngắn](#9-tom-tat-ngan)
+
+## 1. Mô hình hóa bài toán
 
 Đặt:
 
@@ -90,11 +112,17 @@ F[i](x) =
 
 Nếu làm trực tiếp theo mọi giá trị `x, y` thì quá chậm. Điểm quan trọng là mọi `F[i]` đều là hàm lồi, khúc tuyến tính theo `x`, nên ta không cần lưu toàn bộ bảng DP, chỉ cần lưu "hình dạng" của hàm.
 
-## 3. “Điểm gãy” là gì?
+## 3. Nhận xét hình học về `F[i]`
 
-Vì `F[i](x)` là hàm lồi, khúc tuyến tính, đồ thị của nó gồm nhiều đoạn thẳng ghép lại.
+### 3.1. `F[i]` là hàm lồi, khúc tuyến tính
 
-“Điểm gãy” chính là các hoành độ mà tại đó độ dốc của hàm thay đổi.
+Vì chi phí của mỗi bước đều được tạo từ `abs`, `max(., 0)` và phép `min` của các hàm lồi, nên `F[i](x)` là hàm lồi, khúc tuyến tính.
+
+Đồ thị của `F[i]` gồm nhiều đoạn thẳng ghép lại, và chỉ thay đổi độ dốc tại một số hoành độ hữu hạn.
+
+### 3.2. “Điểm gãy” là gì?
+
+“Điểm gãy” là các hoành độ mà tại đó độ dốc của hàm thay đổi.
 
 Ví dụ:
 
@@ -115,11 +143,11 @@ Một phần tử `(p, w)` nghĩa là:
 
 Nói ngắn gọn: heap không lưu "một lượng đất", mà lưu cấu trúc hình học của hàm `F[i]`.
 
-## 4. Hai `priority_queue` lưu gì?
+## 4. Định nghĩa các breakpoint và cấu trúc lưu
 
 Ta biểu diễn một hàm lồi bằng:
 
-- `add`: giá trị nhỏ nhất hiện tại của hàm;
+- `min_value`: giá trị nhỏ nhất hiện tại của hàm;
 - `shift`: độ tịnh tiến ngang của toàn bộ hàm;
 - `L`: các điểm gãy nằm về phía trái vùng đáy;
 - `R`: các điểm gãy nằm về phía phải vùng đáy.
@@ -133,7 +161,7 @@ Trong code hiện tại, `L` và `R` được cài bằng `map` để:
 
 Nhưng về mặt ý tưởng, chúng vẫn đóng vai trò như hai heap hai phía của vùng đáy.
 
-### Heap trái `L`
+### 4.1. Heap trái `L`
 
 `L` lưu các điểm gãy ở bên trái đáy.
 
@@ -144,7 +172,7 @@ Mỗi cặp `(p, w)` trong `L` có nghĩa:
 
 Ta dùng `min-heap` để luôn lấy được điểm xa đáy nhất bên trái trước.
 
-### Heap phải `R`
+### 4.2. Heap phải `R`
 
 `R` lưu các điểm gãy ở bên phải đáy.
 
@@ -155,15 +183,12 @@ Mỗi cặp `(p, w)` trong `R` có nghĩa:
 
 Ta dùng `max-heap` để luôn lấy được điểm xa đáy nhất bên phải trước.
 
-### Góc nhìn "mảng hiệu của slope"
+### 4.3. Góc nhìn “mảng hiệu của slope”
 
-Một cách nhìn rất quan trọng là `L` và `R` không lưu trực tiếp giá trị hàm,
-mà lưu các "event đổi slope".
+Một cách nhìn rất quan trọng là `L` và `R` không lưu trực tiếp giá trị hàm, mà lưu các "event đổi slope".
 
-- `L` là mảng hiệu cho phần bên trái: tại breakpoint `p`, slope bị giảm thêm `w`
-  nếu đi từ đáy sang trái qua điểm đó.
-- `R` là mảng hiệu cho phần bên phải: tại breakpoint `p`, slope bị tăng thêm `w`
-  nếu đi từ đáy sang phải qua điểm đó.
+- `L` là mảng hiệu cho phần bên trái: tại breakpoint `p`, slope bị giảm thêm `w` nếu đi từ đáy sang trái qua điểm đó.
+- `R` là mảng hiệu cho phần bên phải: tại breakpoint `p`, slope bị tăng thêm `w` nếu đi từ đáy sang phải qua điểm đó.
 
 Vì vậy từ mỗi phần tử `(p, w)` ta có thể khôi phục lại một mảnh hàm cơ bản:
 
@@ -178,27 +203,21 @@ giá trị ở đáy
 + tổng các mảnh do R sinh ra
 ```
 
-Đây là lý do `value_at()` chỉ cần cộng đóng góp của từng event vào một giá trị
-đáy đã biết.
+Đây là lý do `value_at()` chỉ cần cộng đóng góp của từng event vào một giá trị đáy đã biết.
 
 Nếu thích liên hệ với "cập nhật đoạn", có thể nhìn như sau:
 
-- thêm `w * max(x - a, 0)` làm slope tăng thêm `w` trên cả nửa trục phải
-  `(a, +inf)`;
-- thêm `w * max(a - x, 0)` làm slope giảm thêm `w` trên cả nửa trục trái
-  `(-inf, a)`.
+- thêm `w * max(x - a, 0)` làm slope tăng thêm `w` trên cả nửa trục phải `(a, +inf)`;
+- thêm `w * max(a - x, 0)` làm slope giảm thêm `w` trên cả nửa trục trái `(-inf, a)`.
 
-Vì ta đang lưu **mảng hiệu của slope**, một "cập nhật nửa trục" như thế không
-cần sửa mọi điểm trên đoạn. Ta chỉ cần thêm một event tại điểm bắt đầu thay đổi
-độ dốc:
+Vì ta đang lưu **mảng hiệu của slope**, một "cập nhật nửa trục" như thế không cần sửa mọi điểm trên đoạn. Ta chỉ cần thêm một event tại điểm bắt đầu thay đổi độ dốc:
 
 - event phải tại `a` cho `w * max(x - a, 0)`;
 - event trái tại `a` cho `w * max(a - x, 0)`.
 
-Đây là cầu nối trực tiếp từ công thức toán học sang hai hàm
-`add_x_minus_a()` và `add_a_minus_x()` trong code.
+Đây là cầu nối trực tiếp từ công thức toán học sang hai hàm `add_x_minus_a()` và `add_a_minus_x()` trong code.
 
-### Vì sao cần `w`?
+### 4.4. Vì sao cần trọng số `w`?
 
 Độ dốc không chỉ thay đổi `1` đơn vị mỗi lần. Nó có thể nhảy một lượng lớn như `X`, `Y`, `Z`.
 
@@ -212,9 +231,13 @@ Ví dụ:
 
 Nên ta thêm trọng số `Z` vào cả `L` lẫn `R` tại vị trí `0`.
 
-## 5. Ba thao tác mỗi bước
+## 5. Ba thao tác khi xử lý mỗi bồn
 
-Từ công thức DP, khi xử lý bồn `i`, ta làm 3 việc.
+Từ công thức DP, khi xử lý bồn `i`, ta làm 3 việc:
+
+1. dịch hàm theo `d[i]`;
+2. kẹp độ dốc vào đoạn `[-Y, X]`;
+3. cộng thêm `Z * |x|`.
 
 ### 5.1. Dịch theo `d[i]`
 
@@ -235,9 +258,7 @@ thì:
 F[i](x) = K_i(x) + Z * |x|
 ```
 
-Phần `d[i]` chỉ xuất hiện trong tổ hợp `x - d[i]`. Nói cách khác,
-`K_i` có cùng hình dạng với hàm thu được khi `d[i] = 0`, chỉ bị dời ngang
-thêm `d[i]`.
+Phần `d[i]` chỉ xuất hiện trong tổ hợp `x - d[i]`. Nói cách khác, `K_i` có cùng hình dạng với hàm thu được khi `d[i] = 0`, chỉ bị dời ngang thêm `d[i]`.
 
 Viết chặt hơn, nếu đặt:
 
@@ -262,13 +283,11 @@ là được:
 K_i(x) = H_i(x - d[i])
 ```
 
-Nghĩa là đồ thị của `K_i` chính là đồ thị của `H_i` bị tịnh tiến sang phải
-`d[i]` đơn vị.
+Nghĩa là đồ thị của `K_i` chính là đồ thị của `H_i` bị tịnh tiến sang phải `d[i]` đơn vị.
 
 Trực giác:
 
-- `d[i] > 0`: bồn `i` đang dư đất, nên trạng thái tối ưu có xu hướng đẩy
-  dòng sang phải nhiều hơn;
+- `d[i] > 0`: bồn `i` đang dư đất, nên trạng thái tối ưu có xu hướng đẩy dòng sang phải nhiều hơn;
 - `d[i] < 0`: bồn `i` đang thiếu đất, nên đáy bị kéo sang trái.
 
 Vì vậy toàn bộ breakpoint của hàm chỉ bị tịnh tiến ngang.
@@ -287,20 +306,15 @@ shift = d[1] + d[2] + ... + d[i]
 
 theo đúng nghĩa "tổng độ dời ngang" đã cộng dồn qua từng bước.
 
-Điểm mấu chốt là `shift` không phải một hằng số xuất hiện ngẫu nhiên trong code,
-mà đến trực tiếp từ công thức:
+Điểm mấu chốt là `shift` không phải một hằng số xuất hiện ngẫu nhiên trong code, mà đến trực tiếp từ công thức:
 
 ```text
 K_i(x) = H_i(x - d[i])
 ```
 
-Mỗi lần có thêm một bồn mới, biến đầu vào của hàm trước đó bị thay từ `x` thành
-`x - d[i]`, tức toàn bộ breakpoint phải dời ngang thêm `d[i]`. Vì code không
-muốn sửa từng breakpoint một, nên nó giữ nguyên các khóa thô trong `map` và chỉ
-cập nhật hệ quy chiếu qua biến `shift`.
+Mỗi lần có thêm một bồn mới, biến đầu vào của hàm trước đó bị thay từ `x` thành `x - d[i]`, tức toàn bộ breakpoint phải dời ngang thêm `d[i]`. Vì code không muốn sửa từng breakpoint một, nên nó giữ nguyên các khóa thô trong `map` và chỉ cập nhật hệ quy chiếu qua biến `shift`.
 
-Do đó các khóa đang lưu trong `L`, `R` chỉ là tọa độ thô. Nếu một breakpoint
-được lưu với khóa `p`, thì vị trí thật của nó trên trục `x` là:
+Do đó các khóa đang lưu trong `L`, `R` chỉ là tọa độ thô. Nếu một breakpoint được lưu với khóa `p`, thì vị trí thật của nó trên trục `x` là:
 
 ```text
 p + shift
@@ -314,104 +328,285 @@ a - shift
 
 vào `L` hoặc `R`, nên toàn bộ thao tác dịch ngang chỉ tốn `O(1)`.
 
-Nên thao tác này là `O(1)`.
-
 ### 5.2. Kẹp độ dốc vào đoạn `[-Y, X]`
 
-Xét riêng phần chưa cộng chi phí vận chuyển:
+Đặt gọn:
 
 ```text
-K_i(x) =
+G(y) = F[i - 1](y)
+```
+
+và nhắc lại:
+
+```text
+H_i(t) =
     min_y {
-        F[i - 1](y)
-        + Y * max(d[i] + y - x, 0)
-        + X * max(x - d[i] - y, 0)
+        G(y)
+        + Y * max(y - t, 0)
+        + X * max(t - y, 0)
     }
 ```
 
-Ta sẽ thấy ngay rằng mọi slope của `K_i` luôn nằm trong đoạn `[-Y, X]`.
-
-#### Nhìn từ nhánh trái
-
-Nếu với một giá trị `x` nào đó, nghiệm tối ưu `y` rơi vào nhánh:
+Khi đó:
 
 ```text
-y >= x - d[i]
+K_i(x) = H_i(x - d[i])
 ```
 
-thì:
+nên chỉ cần hiểu `H_i` được tạo từ `F[i-1]` như thế nào.
+
+### 5.2.1. Tách theo hai nhánh `y >= t` và `y <= t`
+
+Nếu xét nhánh `y >= t` thì:
 
 ```text
-d[i] + y - x >= 0
+G(y) + Y * max(y - t, 0) + X * max(t - y, 0)
+= G(y) + Y * (y - t)
+= G(y) + Y * y + (-Y) * t
 ```
 
-và phần chi phí tại bồn `i` trở thành:
+Từ đó ta có thể viết nhánh phải dưới dạng:
 
 ```text
-Y * (d[i] + y - x) = -Y * x + Y * y + Y * d[i]
+H_R(t) = min_{y >= t} {G(y) + Y * y} + (-Y) * t
 ```
 
-Lúc đó, với `y` đang được cố định, biểu thức theo `x` chỉ là một đường thẳng
-có slope bằng `-Y`.
-
-Nói cách khác, trên nhánh này ta có:
+Nếu xét nhánh `y <= t` thì tương tự:
 
 ```text
-K_i(x) = -Y * x + C
+G(y) + Y * max(y - t, 0) + X * max(t - y, 0)
+= G(y) + X * (t - y)
+= G(y) - X * y + X * t
 ```
 
-với `C` là một hằng số phụ thuộc vào `y`.
-
-#### Nhìn từ nhánh phải
-
-Tương tự, nếu nghiệm tối ưu `y` rơi vào:
+và nhánh trái có dạng:
 
 ```text
-y <= x - d[i]
+H_L(t) = min_{y <= t} {G(y) - X * y} + X * t
 ```
 
-thì:
+Nói cách khác:
+
+- `H_R` được ghép từ các đường thẳng slope `-Y`;
+- `H_L` được ghép từ các đường thẳng slope `X`;
+- `H_i(t)` là bao dưới của hai loại nhánh đó.
+
+### 5.2.2. Nhận xét về hai hàm nghiêng `G(y) + Y * y` và `G(y) - X * y`
+
+Dễ thấy `G(y) + Y * y` cũng là một hàm slope-trick-able, và phần cộng thêm `Y * y` sẽ làm tăng slope của toàn bộ hàm `G`.
+
+Tương tự, `G(y) - X * y` sẽ làm giảm slope của toàn bộ hàm `G`.
+
+Chính từ hai phép nghiêng này mà đáy của hàm thay đổi, và đây là trực giác của thao tác "kẹp slope".
+
+### 5.2.3. Giải thích nhánh phải `H_R`
+
+Xét ví dụ:
 
 ```text
-x - d[i] - y >= 0
+Y = 2, X = 1
 ```
 
-và chi phí tại bồn `i` trở thành:
+và
 
 ```text
-X * (x - d[i] - y) = X * x - X * y - X * d[i]
+G(t) = F[i-1](t) =
+
+    -3t - 2    nếu t <= -1
+    -t         nếu -1 <= t <= 1
+    -1         nếu 1 <= t <= 3
+    2t - 7     nếu t >= 3
 ```
 
-nên khi `y` cố định, biểu thức theo `x` là một đường thẳng có slope bằng `X`.
-
-#### Kết luận về slope
-
-`K_i(x)` là `min` của rất nhiều đường thẳng như trên:
-
-- một số đường có slope `-Y`;
-- một số đường có slope `X`;
-- và khi `x` thay đổi, nghiệm tối ưu có thể chuyển từ đường này sang đường
-  khác.
-
-Vì `K_i` là hàm lồi, khi đổi từ một đường tối ưu sang đường tối ưu khác, slope
-chỉ có thể tăng dần. Do các đường ứng viên chỉ mang hai slope biên `-Y` và `X`,
-mọi slope thực tế của `K_i` bắt buộc phải nằm trong đoạn:
+Khi đó:
 
 ```text
-[-Y, X]
+H_R(t) =
+
+    -2t - 1    nếu t <= -1
+    -t         nếu -1 <= t <= 1
+    -1         nếu 1 <= t <= 3
+    2t - 7     nếu t >= 3
 ```
 
-Đây chính là ý nghĩa của bước "kẹp độ dốc":
+![Min-plus convolution tạo hàm H_R từ hàm G](./images/H_R.png)
 
-- bên trái không được dốc nhỏ hơn `-Y`;
-- bên phải không được dốc lớn hơn `X`.
+```text
+G(y) + Y * max(y - t, 0) + X * max(t - y, 0)
+= G(y) + Y * (y - t)
+= G(y) + Y * y + (-Y) * t
+
+H_R(t) = min_{y >= t} {G(y) + Y * y} + (-Y) * t
+```
+
+Có thể hiểu biểu thức này theo hai bước:
+
+1. Trước hết, xét hàm:
+
+```text
+G(y) + Y * y
+```
+
+Phần cộng thêm `Y * y` làm tăng slope của toàn bộ hàm `G`, nên điểm đáy của hàm này cũng thay đổi.
+
+2. Sau đó, với mỗi `t`, ta lấy:
+
+```text
+min_{y >= t} {G(y) + Y * y}
+```
+
+rồi cộng thêm phần tuyến tính:
+
+```text
+(-Y) * t
+```
+
+Từ đây có hai tình huống.
+
+#### Trường hợp 1. `t` đang nằm ở phía trái đáy của `G(y) + Y * y`
+
+Giả sử tại vùng đang xét, hàm có slope dạng `-S` với `S < Y`, hay tương đương:
+
+```text
+-S + Y < 0
+```
+
+Khi đó ta vẫn còn đang ở bên trái đáy của hàm `G(y) + Y * y`, nên:
+
+```text
+min_{y >= t} {G(y) + Y * y}
+```
+
+sẽ lấy đúng giá trị nhỏ nhất của hàm này, giả sử đạt tại `y_0`.
 
 Do đó:
 
-- nếu tổng trọng số trong `L` vượt `Y`, ta bỏ bớt các điểm gãy xa nhất bên trái;
-- nếu tổng trọng số trong `R` vượt `X`, ta bỏ bớt các điểm gãy xa nhất bên phải.
+```text
+H_R(t) = (-Y) * t + C
+```
 
-Đây là lý do phải dùng `priority_queue`: luôn loại được phần đuôi ngoài cùng trước.
+với:
+
+```text
+C = G(y_0) + Y * y_0
+```
+
+Nói cách khác, trong vùng này `H_R(t)` là một đường thẳng có slope đúng bằng `-Y`.
+
+Đây chính là ý nghĩa hình học của bước kẹp ở phía trái: các slope quá âm của `G` sẽ bị "thu" về đúng biên `-Y`.
+
+#### Trường hợp 2. `t` đã nằm ở phía phải đáy của `G(y) + Y * y`
+
+Nếu tại `t`, hàm có slope dạng `-S` nhưng:
+
+```text
+-S + Y >= 0
+```
+
+thì lúc này ta đã đi sang bên phải đáy của hàm `G(y) + Y * y`.
+
+Vì ở bên phải đáy nên hàm tăng dần theo `y`, do đó với ràng buộc `y >= t` thì giá trị nhỏ nhất sẽ đạt ngay tại:
+
+```text
+y = t
+```
+
+Khi đó:
+
+```text
+H_R(t) = G(t)
+```
+
+tức là ở vùng này nhánh phải không còn chỉnh sửa gì thêm: hàm được giữ nguyên.
+
+#### Kết luận
+
+Từ hai trường hợp trên, ta có thể hiểu `H_R` như sau:
+
+- ở những nơi slope của `G` quá âm, `H_R` thay phần đó bằng một đoạn thẳng slope `-Y`;
+- ở những nơi slope của `G` đã đủ lớn, `H_R` giữ nguyên `G(t)`.
+
+Vì thế, `H_R` chính là nhánh dùng để "thu" các slope nhỏ hơn `-Y` về đúng biên `-Y`.
+
+### 5.2.4. Giải thích nhánh trái `H_L`
+
+Lập luận cho `H_L` hoàn toàn đối xứng với `H_R`.
+
+Ta có:
+
+```text
+H_L(t) = min_{y <= t} {G(y) - X * y} + X * t
+```
+
+Có thể hiểu theo hai bước:
+
+1. Trước hết, xét hàm:
+
+```text
+G(y) - X * y
+```
+
+Phần trừ đi `X * y` làm giảm slope của toàn bộ hàm `G`, nên vị trí đáy của hàm này cũng thay đổi.
+
+2. Sau đó, với mỗi `t`, ta lấy:
+
+```text
+min_{y <= t} {G(y) - X * y}
+```
+
+rồi cộng thêm:
+
+```text
+X * t
+```
+
+Từ đây cũng có hai tình huống.
+
+#### Trường hợp 1. `t` đang nằm ở phía phải đáy của `G(y) - X * y`
+
+Nếu tại vùng đang xét, hàm `G(y) - X * y` còn đang ở bên phải đáy, thì:
+
+```text
+H_L(t) = X * t + C
+```
+
+với `C` là một hằng số phù hợp. Khi đó `H_L(t)` trở thành một đường thẳng slope `X`.
+
+Hiểu hình học: các slope quá dương của `G` sẽ bị "thu" về đúng biên `X`.
+
+#### Trường hợp 2. `t` đã nằm ở phía trái đáy của `G(y) - X * y`
+
+Ngược lại, nếu điều kiện `y <= t` làm nghiệm tối ưu rơi ngay tại `y = t`, thì:
+
+```text
+H_L(t) = G(t)
+```
+
+và ở vùng đó nhánh trái không chỉnh sửa gì thêm: hàm được giữ nguyên.
+
+#### Kết luận
+
+Tóm lại:
+
+- ở những nơi slope của `G` quá dương, `H_L` thay phần đó bằng một đoạn thẳng slope `X`;
+- ở những nơi slope của `G` đã đủ nhỏ, `H_L` giữ nguyên `G(t)`.
+
+Vì thế, `H_L` chính là nhánh dùng để "thu" các slope lớn hơn `X` về đúng biên `X`.
+
+### 5.2.5. Kết luận của bước kẹp
+
+Sau hai nhánh trên:
+
+- các slope nhỏ hơn `-Y` bị kéo lên thành `-Y`;
+- các slope lớn hơn `X` bị kéo xuống thành `X`;
+- những đoạn đã có slope nằm sẵn trong `[-Y, X]` thì được giữ nguyên.
+
+Đó chính là ý nghĩa của bước "kẹp độ dốc".
+
+Do đó trong cấu trúc dữ liệu:
+
+- nếu tổng trọng số trong `L` vượt `Y`, ta bỏ bớt các breakpoint xa nhất bên trái;
+- nếu tổng trọng số trong `R` vượt `X`, ta bỏ bớt các breakpoint xa nhất bên phải.
 
 ### 5.3. Cộng `Z * |x|`
 
@@ -430,8 +625,7 @@ trong cả `L` và `R`.
 
 ### 5.4. Ghi chú về thao tác rebalance
 
-Trước hết, hãy viết hai phép thêm theo đúng ngôn ngữ "update đoạn trên mảng hiệu
-của slope".
+Trước hết, hãy viết hai phép thêm theo đúng ngôn ngữ "update đoạn trên mảng hiệu của slope".
 
 #### `add_x_minus_a(a, w)` là update gì?
 
@@ -489,22 +683,17 @@ left_breaks[a] += w
 
 #### Vì sao không phải lúc nào cũng chỉ việc cộng event?
 
-Nếu `a` nằm sai phía so với đáy hiện tại, thì "cập nhật nửa trục" ở trên sẽ làm
-đáy của hàm dịch chuyển. Khi đó, ngoài việc thêm event mới, ta còn phải:
+Nếu `a` nằm sai phía so với đáy hiện tại, thì "cập nhật nửa trục" ở trên sẽ làm đáy của hàm dịch chuyển. Khi đó, ngoài việc thêm event mới, ta còn phải:
 
 - lấy bớt một phần trọng số ở breakpoint sát đáy phía đối diện;
 - chuyển phần trọng số đó sang phía còn lại;
 - cộng phần tăng bắt buộc của giá trị nhỏ nhất vào `min_value`.
 
-Đó chính là phần `while` trong `add_x_minus_a()` và `add_a_minus_x()`: nó không
-phải cập nhật giá trị hàm theo từng `x`, mà đang thực hiện **rebalance sau một
-cập nhật đoạn trên mảng hiệu slope**.
+Đó chính là phần `while` trong `add_x_minus_a()` và `add_a_minus_x()`: nó không phải cập nhật giá trị hàm theo từng `x`, mà đang thực hiện **rebalance sau một cập nhật đoạn trên mảng hiệu slope**.
 
-Khi cài đặt bằng slope trick, hai phép thêm cơ bản không cập nhật từng đoạn
-thẳng của đồ thị, mà chỉ thêm một event đổi slope rồi rebalance ở biên đáy.
+Khi cài đặt bằng slope trick, hai phép thêm cơ bản không cập nhật từng đoạn thẳng của đồ thị, mà chỉ thêm một event đổi slope rồi rebalance ở biên đáy.
 
-Ví dụ với mảnh phải `max(x - a, 0)`, nếu `a` nằm bên trái breakpoint gần đáy
-nhất ở phía trái là `l`, ta dùng đẳng thức:
+Ví dụ với mảnh phải `max(x - a, 0)`, nếu `a` nằm bên trái breakpoint gần đáy nhất ở phía trái là `l`, ta dùng đẳng thức:
 
 ```text
 max(l - x, 0) + max(x - a, 0)
@@ -513,15 +702,11 @@ max(l - x, 0) + max(x - a, 0)
 
 Ý nghĩa:
 
-- `l - a` là phần tăng bắt buộc của giá trị nhỏ nhất, nên ta cộng ngay vào
-  `min_value`;
+- `l - a` là phần tăng bắt buộc của giá trị nhỏ nhất, nên ta cộng ngay vào `min_value`;
 - breakpoint ở `l` được chuyển sang phía phải;
 - đồng thời thêm một breakpoint mới ở `a` cho phía trái.
 
-Điều quan trọng là: breakpoint được chuyển cuối cùng trong quá trình này chỉ là
-một biên của đoạn đáy mới do phần trọng số vừa rebalance tạo ra. Nó không nhất
-thiết luôn là toàn bộ biên của đáy của cả hàm, vì các breakpoint khác vẫn có
-thể đang giữ đáy rộng hơn.
+Điều quan trọng là: breakpoint được chuyển cuối cùng trong quá trình này chỉ là một biên của đoạn đáy mới do phần trọng số vừa rebalance tạo ra. Nó không nhất thiết luôn là toàn bộ biên của đáy của cả hàm, vì các breakpoint khác vẫn có thể đang giữ đáy rộng hơn.
 
 Phép `add_a_minus_x` hoàn toàn đối xứng:
 
@@ -534,13 +719,9 @@ với `r` là breakpoint gần đáy nhất ở phía phải.
 
 Nếu đối chiếu trực tiếp với code:
 
-- ở `add_x_minus_a()`, câu lệnh thêm vào `right_breaks` là phần "cập nhật đoạn
-  `(a, +inf)`" dưới dạng mảng hiệu;
-- ở `add_a_minus_x()`, câu lệnh thêm vào `left_breaks` là phần "cập nhật đoạn
-  `(-inf, a)`" dưới dạng mảng hiệu;
-- toàn bộ phần còn lại trong vòng `while` là logic rebalance để bảo toàn việc
-  `left_breaks`, `right_breaks` vẫn đang mô tả đúng một hàm lồi với vùng đáy
-  hợp lệ.
+- ở `add_x_minus_a()`, câu lệnh thêm vào `right_breaks` là phần "cập nhật đoạn `(a, +inf)`" dưới dạng mảng hiệu;
+- ở `add_a_minus_x()`, câu lệnh thêm vào `left_breaks` là phần "cập nhật đoạn `(-inf, a)`" dưới dạng mảng hiệu;
+- toàn bộ phần còn lại trong vòng `while` là logic rebalance để bảo toàn việc `left_breaks`, `right_breaks` vẫn đang mô tả đúng một hàm lồi với vùng đáy hợp lệ.
 
 ## 6. Khởi tạo
 
@@ -558,29 +739,25 @@ Nó có một điểm gãy tại `0`:
 Vì vậy trạng thái ban đầu có thể hiểu là:
 
 ```text
-add = 0
+min_value = 0
 shift = 0
 L = {(0, Y)}
 R = {(0, X)}
 ```
 
-## 7. Lấy đáp án cuối
+## 7. Lấy giá trị hàm tại một điểm
 
 Sau khi xử lý hết `N` bồn, ta cần giá trị `F[N](0)`.
 
-Lúc này `add` mới chỉ là giá trị nhỏ nhất của hàm, chưa chắc nằm ở `x = 0`.
-Trong code, biến đó tên là `min_value`.
+Lúc này `min_value` mới chỉ là giá trị nhỏ nhất của hàm, chưa chắc nằm ở `x = 0`.
 
-Điều quan trọng là `L` và `R` đang lưu "mảng hiệu của slope", nên để tính
-giá trị tại một điểm `x` ta chỉ cần cộng tất cả các đóng góp của các event
-đổi slope vào `min_value`.
+Điều quan trọng là `L` và `R` đang lưu "mảng hiệu của slope", nên để tính giá trị tại một điểm `x` ta chỉ cần cộng tất cả các đóng góp của các event đổi slope vào `min_value`.
 
 Hiểu theo ngôn ngữ "tích phân lại mảng hiệu":
 
 - `L`, `R` cho ta biết slope đổi ở đâu và đổi bao nhiêu;
 - `min_value` cho ta biết mốc giá trị tại đáy;
-- từ đó, muốn biết giá trị tại `x`, ta chỉ cần cộng tất cả phần diện tích do
-  các lần đổi slope tạo ra trên đường đi từ đáy tới `x`.
+- từ đó, muốn biết giá trị tại `x`, ta chỉ cần cộng tất cả phần diện tích do các lần đổi slope tạo ra trên đường đi từ đáy tới `x`.
 
 Vì trong cấu trúc dữ liệu ta lưu tọa độ thô, trước hết đổi:
 
@@ -596,8 +773,7 @@ Khi đó:
 w * max(p - raw_x, 0)
 ```
 
-  vì nếu `raw_x < p` thì ta đang đứng về bên trái breakpoint đó, nên event này
-  kéo giá trị hàm tăng thêm đúng `w` nhân với khoảng cách `p - raw_x`;
+vì nếu `raw_x < p` thì ta đang đứng về bên trái breakpoint đó, nên event này kéo giá trị hàm tăng thêm đúng `w` nhân với khoảng cách `p - raw_x`;
 
 - mỗi phần tử `(p, w)` trong `R` đóng góp:
 
@@ -605,8 +781,7 @@ w * max(p - raw_x, 0)
 w * max(raw_x - p, 0)
 ```
 
-  vì nếu `raw_x > p` thì ta đang đứng về bên phải breakpoint đó, nên event này
-  kéo giá trị hàm tăng thêm đúng `w` nhân với khoảng cách `raw_x - p`.
+vì nếu `raw_x > p` thì ta đang đứng về bên phải breakpoint đó, nên event này kéo giá trị hàm tăng thêm đúng `w` nhân với khoảng cách `raw_x - p`.
 
 Vì thế:
 
@@ -622,25 +797,21 @@ F[N](x)
 Có thể hiểu trực giác hơn như sau:
 
 - `min_value` là giá trị ở đáy;
-- mỗi event trong `L`, `R` là một phần tử của "mảng hiệu slope", tức nói rằng
-  khi ta đi qua một breakpoint thì slope đổi thêm `w`;
-- cộng các biểu thức `max(...)` ở trên chính là "tích phân lại" các thay đổi
-  slope đó để thu được chênh lệch giá trị từ đáy tới điểm `x`.
+- mỗi event trong `L`, `R` là một phần tử của "mảng hiệu slope", tức nói rằng khi ta đi qua một breakpoint thì slope đổi thêm `w`;
+- cộng các biểu thức `max(...)` ở trên chính là "tích phân lại" các thay đổi slope đó để thu được chênh lệch giá trị từ đáy tới điểm `x`.
 
-Độ phức tạp:
+## 8. Độ phức tạp
 
 - mỗi lần thêm/xóa trên heap là `O(log N)`;
 - tổng số phần tử được thêm là `O(N)`;
 - nên toàn bộ thuật toán là `O(N log N)`;
 - bộ nhớ `O(N)`.
 
-## 8. Tóm tắt ngắn
+## 9. Tóm tắt ngắn
 
 - `F[i](x)` là chi phí tốt nhất nếu sau bồn `i` còn gửi `x` đất sang phải.
 - `F[i]` là hàm lồi, khúc tuyến tính.
 - Ta không lưu cả hàm theo từng `x`, mà lưu các điểm gãy của nó.
 - `L` chứa các điểm gãy bên trái đáy, `R` chứa các điểm gãy bên phải đáy.
-- Mỗi phần tử heap là `(vị trí, trọng số thay đổi độ dốc)`.
+- Mỗi phần tử trong `L`, `R` là một event đổi slope kèm trọng số.
 - Mỗi bồn mới chỉ làm 3 việc: dịch hàm, kẹp độ dốc, thêm `Z * |x|`.
-
-Đó là ý nghĩa chính của hai `priority_queue` và các “điểm gãy” được lưu trong lời giải này.
