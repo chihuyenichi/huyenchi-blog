@@ -88,6 +88,21 @@ export function getSticker(post: Pick<Post, "difficulty" | "slug">) {
   return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/stickers/${options[index]}`;
 }
 
+export const stickerFiles = [
+  "thumbs-up.jpg",
+  "drool.jpg",
+  "reading.png",
+  "lick-screen.jpg",
+  "question.jpg",
+  "grumpy.jpg",
+  "referee.jpg",
+] as const;
+
+export function getAllStickers() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  return stickerFiles.map((file) => `${basePath}/stickers/${file}`);
+}
+
 export function getRenderedMarkdown(post: Post) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return post.content
