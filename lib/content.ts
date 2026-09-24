@@ -75,6 +75,19 @@ export function getSiteBackground(seed: string) {
   return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/images-2/${siteBackgrounds[index]}`;
 }
 
+const difficultyStickers = {
+  easy: ["thumbs-up.jpg", "drool.jpg"],
+  medium: ["reading.png", "lick-screen.jpg"],
+  hard: ["question.jpg", "grumpy.jpg"],
+  insane: ["referee.jpg"],
+} as const;
+
+export function getSticker(post: Pick<Post, "difficulty" | "slug">) {
+  const options = difficultyStickers[post.difficulty];
+  const index = [...post.slug].reduce((total, character) => total + character.charCodeAt(0), 0) % options.length;
+  return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/stickers/${options[index]}`;
+}
+
 export function getRenderedMarkdown(post: Post) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return post.content

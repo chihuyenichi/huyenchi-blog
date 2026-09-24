@@ -4,9 +4,9 @@ export function Header() {
   return (
     <header className="site-header">
       <div className="shell header-inner">
-        <Link className="wordmark" href="/" aria-label="Cipher Notes home">
+        <Link className="wordmark" href="/" aria-label="Tech Notes home">
           <span className="wordmark-mark">&gt;_</span>
-          Cipher Notes
+          Tech Notes
         </Link>
         <nav aria-label="Primary navigation">
           <Link href="/writeups">Writeups</Link>
