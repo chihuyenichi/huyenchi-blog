@@ -106,6 +106,15 @@ export function getAllStickers() {
 export function getRenderedMarkdown(post: Post) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return post.content
+    // Render mọi Markdown resource bằng viewer nội bộ thay vì mở file thô.
+    .replace(
+      /\]\(\/([a-z0-9]+(?:-[a-z0-9]+)*)\/([a-z0-9][a-z0-9_-]*)\.md\)/g,
+      "](/writeups/$1/resources/$2/)",
+    )
+    .replace(
+      /\]\(\.\/([a-z0-9][a-z0-9_-]*)\.md\)/g,
+      `](/writeups/${post.slug}/resources/$1/)`,
+    )
     .replace(/\]\(\/(?!\/)/g, `](${basePath}/`)
     .replace(/^(\[[^\]]+\]:\s*)\/(?!\/)/gm, `$1${basePath}/`)
     .replace(/\]\(\.\/images\//g, `](../../images/posts/${post.slug}/`);

@@ -1,0 +1,156 @@
+/* Font stack tối ưu cho nội dung tiếng Việt. */
+body {
+  font-family: var(--font-sans), "Segoe UI", Arial, sans-serif;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+}
+
+.wordmark,
+.hero h1,
+.section-heading h2,
+.feature-copy h2,
+.card-image-title,
+.deck-side-title,
+.deck-card-title,
+.writeup-row-title,
+.archive-page > h1,
+.admin-page > h1,
+.not-found h1,
+.category-block h2,
+.event-list h2,
+.year-group h2,
+.article-header h1,
+.dek,
+.prose h1,
+.prose h2,
+.prose h3,
+.upload-workspace h2 {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.wordmark-mark,
+.kicker,
+.hero-archive-link,
+.section-heading > a,
+.feature-copy > a,
+.text-link,
+.card-image-label,
+.eyebrow,
+.preview-meta,
+.ig-difficulty,
+.deck-card-link,
+.tag-row > *,
+.writeup-row-date,
+.writeup-row-labels span,
+.writeup-row-arrow,
+.category-block time,
+.filters h2,
+.year-group span,
+.year-group time,
+.article-tools h2,
+.article-aside,
+.prose code,
+.field-grid label,
+.upload-notice {
+  font-family: var(--font-sans), "Segoe UI", Arial, sans-serif;
+}
+
+.prose {
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Nội dung kỹ thuật dùng monospace để ký hiệu và code đồng nhất, dễ quét. */
+.prose,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose pre,
+.prose code,
+.prose pre code {
+  font-family: Consolas, "Courier New", monospace;
+}
+
+/* Tài liệu Markdown (đề bài, editorial...) cần đọc tốt như một trang độc lập. */
+.resource-document-header {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 42px;
+  padding: 10px 0 18px;
+}
+
+.resource-document-header .kicker {
+  margin: 0;
+}
+
+.resource-document-header div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+
+.resource-document-header a {
+  color: #176254;
+  font-weight: 600;
+}
+
+.resource-prose {
+  background: rgba(255, 255, 255, .7);
+  border: 1px solid rgba(91, 41, 53, .14);
+  box-shadow: 0 24px 70px rgba(83, 45, 55, .09);
+  margin: 0 auto;
+  max-width: 920px;
+  padding: clamp(28px, 6vw, 72px);
+}
+
+.resource-prose > :first-child {
+  margin-top: 0;
+}
+
+.prose table {
+  border-collapse: collapse;
+  display: block;
+  margin: 24px 0;
+  max-width: 100%;
+  overflow-x: auto;
+  width: max-content;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.prose th {
+  background: #e8efe9;
+  font-weight: 700;
+}
+
+.prose blockquote {
+  border-left: 4px solid #c85b78;
+  color: var(--muted);
+  margin: 24px 0;
+  padding: 2px 0 2px 20px;
+}
+
+.prose .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+
+@media (max-width: 760px) {
+  .resource-document-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .resource-prose {
+    padding: 24px 18px;
+  }
+}
