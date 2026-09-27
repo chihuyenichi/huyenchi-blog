@@ -1,4 +1,4 @@
-# Cipher Notes
+# Tech Notes
 
 A static CTF writeup blog deployed to GitHub Pages.
 
