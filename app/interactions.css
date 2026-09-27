@@ -1,0 +1,20 @@
+/* Card deck: chờ một nhịp ngắn trước khi expand để tránh kích hoạt ngoài ý muốn. */
+@media (hover: hover) and (pointer: fine) {
+  .deck-item {
+    transition-duration: 600ms;
+    transition-timing-function: cubic-bezier(.22, .61, .36, 1);
+  }
+
+  .post-deck:has(.deck-card:hover) .deck-item {
+    transition-delay: 140ms;
+  }
+
+  .deck-card:hover .deck-card-spine,
+  .deck-card:hover .deck-expanded {
+    transition-delay: 120ms;
+  }
+
+  .deck-expanded {
+    transition-duration: 320ms, 460ms;
+  }
+}

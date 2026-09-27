@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import "./typography.css";
+import "./interactions.css";
 
 const bungee = Bungee({ weight: "400", subsets: ["latin"], variable: "--font-magic" });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-word" });

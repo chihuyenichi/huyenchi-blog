@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,27 +5,10 @@ import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { codeToHtml } from "shiki";
+import { CopyCodeButton } from "@/components/copy-code";
 import { getPost } from "@/lib/content";
-
-const publicDirectory = path.join(process.cwd(), "public");
-
-function getMarkdownResources() {
-  if (!fs.existsSync(publicDirectory)) return [];
-
-  return fs.readdirSync(publicDirectory, { withFileTypes: true }).flatMap((entry) => {
-    if (!entry.isDirectory()) return [];
-    const directory = path.join(publicDirectory, entry.name);
-    return fs.readdirSync(directory, { withFileTypes: true })
-      .filter((file) => file.isFile() && file.name.endsWith(".md"))
-      .map((file) => ({ slug: entry.name, resource: file.name.slice(0, -3) }));
-  });
-}
-
-function readMarkdownResource(slug: string, resource: string) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || !/^[a-z0-9][a-z0-9_-]*$/.test(resource)) return null;
-  const source = path.join(publicDirectory, slug, `${resource}.md`);
-  return fs.existsSync(source) ? fs.readFileSync(source, "utf8") : null;
-}
+import { getAllRenderableResources, getRenderableResource } from "@/lib/resources";
 
 function getDocumentTitle(markdown: string, resource: string) {
   return markdown.match(/^#\s+(.+)$/m)?.[1] ?? resource.replaceAll("-", " ");
@@ -41,7 +22,7 @@ function renderResourceMarkdown(markdown: string, slug: string) {
 }
 
 export function generateStaticParams() {
-  return getMarkdownResources();
+  return getAllRenderableResources();
 }
 
 export async function generateMetadata({
@@ -50,8 +31,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string; resource: string }>;
 }): Promise<Metadata> {
   const { slug, resource } = await params;
-  const markdown = readMarkdownResource(slug, resource);
-  return markdown ? { title: getDocumentTitle(markdown, resource) } : {};
+  const file = getRenderableResource(slug, resource);
+  if (!file) return {};
+  return { title: file.kind === "markdown" ? getDocumentTitle(file.content, resource) : file.fileName };
 }
 
 export default async function MarkdownResourcePage({
@@ -60,13 +42,16 @@ export default async function MarkdownResourcePage({
   params: Promise<{ slug: string; resource: string }>;
 }) {
   const { slug, resource } = await params;
-  const markdown = readMarkdownResource(slug, resource);
+  const file = getRenderableResource(slug, resource);
   const post = getPost(slug);
-  if (!markdown || !post) notFound();
+  if (!file || !post) notFound();
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  const rawUrl = `${basePath}/${slug}/${resource}.md`;
-  const documentTitle = getDocumentTitle(markdown, resource);
+  const rawUrl = `${basePath}/${slug}/${file.fileName}`;
+  const documentTitle = file.kind === "markdown" ? getDocumentTitle(file.content, resource) : file.fileName;
+  const highlightedCode = file.kind === "code"
+    ? await codeToHtml(file.content, { lang: file.language, theme: "github-dark" })
+    : null;
 
   return (
     <article className="resource-document">
@@ -76,17 +61,32 @@ export default async function MarkdownResourcePage({
           <Link href={`/writeups/${slug}`}>{post.title}</Link> / {documentTitle}
         </p>
         <header className="resource-document-header">
-          <p className="kicker">MARKDOWN DOCUMENT</p>
+          <p className="kicker">{file.kind === "markdown" ? "MARKDOWN DOCUMENT" : `${file.label} SOURCE CODE`}</p>
           <div>
             <Link href={`/writeups/${slug}`}>← Quay lại bài giải</Link>
-            <a href={rawUrl} download>Markdown gốc ↓</a>
+            {file.kind === "code" && <CopyCodeButton />}
+            <a href={rawUrl} download>{file.kind === "markdown" ? "Markdown gốc" : "Tải source"} ↓</a>
           </div>
         </header>
-        <main className="prose resource-prose">
-          <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
-            {renderResourceMarkdown(markdown, slug)}
-          </ReactMarkdown>
-        </main>
+        {file.kind === "markdown" ? (
+          <main className="prose resource-prose">
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+              {renderResourceMarkdown(file.content, slug)}
+            </ReactMarkdown>
+          </main>
+        ) : (
+          <main className="source-code-viewer">
+            <div className="source-code-toolbar">
+              <strong>{file.fileName}</strong>
+              <span>{file.label} · UTF-8</span>
+            </div>
+            <div
+              className="source-code-frame"
+              data-source-code
+              dangerouslySetInnerHTML={{ __html: highlightedCode ?? "" }}
+            />
+          </main>
+        )}
       </div>
     </article>
   );

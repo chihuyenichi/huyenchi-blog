@@ -95,6 +95,15 @@ body {
   font-weight: 600;
 }
 
+.resource-action {
+  background: none;
+  border: 0;
+  color: #176254;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+}
+
 .resource-prose {
   background: rgba(255, 255, 255, .7);
   border: 1px solid rgba(91, 41, 53, .14);
@@ -143,6 +152,76 @@ body {
   padding: 4px 0;
 }
 
+.source-code-viewer {
+  background: #0d1117;
+  border: 1px solid rgba(91, 41, 53, .24);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(25, 15, 20, .2);
+  color: #e6edf3;
+  overflow: hidden;
+}
+
+.source-code-toolbar {
+  align-items: center;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  font-family: Consolas, "Courier New", monospace;
+  justify-content: space-between;
+  padding: 12px 18px;
+}
+
+.source-code-toolbar span {
+  color: #8b949e;
+  font-size: .78rem;
+}
+
+.source-code-frame {
+  overflow: auto;
+}
+
+.source-code-frame pre.shiki {
+  border: 0;
+  border-radius: 0;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .9rem;
+  line-height: 1.65;
+  margin: 0;
+  min-width: max-content;
+  padding: 22px 0;
+  tab-size: 4;
+}
+
+.source-code-frame code {
+  counter-reset: source-line;
+  display: grid;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+.source-code-frame .line {
+  display: inline-block;
+  min-height: 1.65em;
+  padding: 0 26px 0 72px;
+  position: relative;
+  width: 100%;
+}
+
+.source-code-frame .line::before {
+  color: #6e7681;
+  content: counter(source-line);
+  counter-increment: source-line;
+  left: 0;
+  padding-right: 18px;
+  position: absolute;
+  text-align: right;
+  user-select: none;
+  width: 52px;
+}
+
+.source-code-frame .line:hover {
+  background: rgba(177, 186, 196, .08);
+}
+
 @media (max-width: 760px) {
   .resource-document-header {
     align-items: flex-start;
@@ -152,5 +231,20 @@ body {
 
   .resource-prose {
     padding: 24px 18px;
+  }
+
+  .source-code-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .source-code-frame .line {
+    padding-left: 58px;
+  }
+
+  .source-code-frame .line::before {
+    padding-right: 12px;
+    width: 42px;
   }
 }
