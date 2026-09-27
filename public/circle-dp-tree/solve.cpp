@@ -11,21 +11,6 @@ int a[nmax + 2];
 bool inCir[nmax + 2];
 vector<int> cir_list;
 
-// dp[u][press_u][base_color_u] = 1
-//
-// Xét cây treo gốc u sau khi bỏ các cạnh thuộc chu trình.
-//
-// Ý nghĩa:
-// - mọi đỉnh con đúng nghĩa của u đều đã xanh hoàn toàn;
-// - press_u là việc có bấm u hay không;
-// - base_color_u là màu của u sau khi:
-//   + bắt đầu từ a[u],
-//   + bấm u nếu press_u = 1,
-//   + nhận tác động từ toàn bộ các con ngoài chu trình được bấm,
-//   nhưng chưa nhận tác động từ cha của u.
-//
-// Công thức:
-//   base_color_u = a[u] xor press_u xor xor_press_children
 char dp[nmax + 2][2][2];
 
 int encodeState(int pressed, int color) {
@@ -69,19 +54,9 @@ void buildTreeDp(int u, int p) {
         buildTreeDp(v, u);
     }
 
-    // merge_ok[child_xor][press_u] = 1
-    //
-    // Sau khi ghép xong một số con của u:
-    // - child_xor là xor của các con đã chọn bấm;
-    // - press_u cố định.
-    //
-    // Khi ghép thêm con v, trạng thái của v phải thỏa:
-    //   color_v xor press_u = 1
-    // vì color_v là màu của v trước khi bị cha u tác động.
     int merge_ok[2][2] = {};
     int prev_ok[2][2] = {};
 
-    // Chưa có con nào: xor số con được bấm bằng 0.
     for (int press_u = 0; press_u < 2; ++press_u) {
         merge_ok[0][press_u] = 1;
     }
@@ -125,9 +100,6 @@ bool traceTree(int u, int p, int press_u, int base_color_u, vector<int>& answer)
         children.push_back(v);
     }
 
-    // Từ công thức:
-    //   base_color_u = a[u] xor press_u xor xor_press_children
-    // suy ra xor_press_children cần đạt là:
     int need_child_xor = a[u] ^ press_u ^ base_color_u;
 
     int k = (int)children.size();
@@ -192,27 +164,6 @@ bool solveQuery(vector<int>& answer) {
     int m = (int)cir_list.size();
     if (m < 3) return false;
 
-    // Cycle DP.
-    //
-    // Với đỉnh trên chu trình, gọi base_color_i là trạng thái từ dp như trên,
-    // tức là màu của đỉnh i trước khi nhận 2 tác động từ 2 hàng xóm trên chu trình.
-    //
-    // Màu cuối cùng của đỉnh i là:
-    //   final_color_i = base_color_i xor press_{i-1} xor press_{i+1}
-    //
-    // Khi duyệt từ trái sang phải trên chu trình:
-    // - current_color_i = base_color_i xor press_{i-1}
-    //   là màu của đỉnh i sau khi đã nhận tác động từ đỉnh trước,
-    //   nhưng chưa nhận tác động từ đỉnh sau.
-    //
-    // Khi chọn press_{i+1}, ta chốt được đỉnh i bằng điều kiện:
-    //   current_color_i xor press_{i+1} = 1
-    //
-    // Riêng đỉnh đầu v0 không thể chốt sớm vì còn phụ thuộc đỉnh cuối.
-    // Nên sau khi chọn (v0, v1), ta mang theo:
-    //   pending_color_0 = base_color_0 xor press_1
-    // và chỉ kiểm tra nó ở bước khép chu trình với press_last.
-
     int reach_prev[4][4] = {};
     int reach_cur[4][4] = {};
 
@@ -228,7 +179,6 @@ bool solveQuery(vector<int>& answer) {
     int v0 = cir_list[0];
     int v1 = cir_list[1];
 
-    // Khởi tạo đặc biệt bằng cặp (v0, v1).
     for (int press_0 = 0; press_0 < 2; ++press_0) {
         for (int base_color_0 = 0; base_color_0 < 2; ++base_color_0) {
             if (!dp[v0][press_0][base_color_0]) continue;
@@ -265,8 +215,7 @@ bool solveQuery(vector<int>& answer) {
                 int pending_color_0 = getColor(start_info);
 
                 for (int press_u = 0; press_u < 2; ++press_u) {
-                    // Chọn press_u để chốt đỉnh trước:
-                    //   prev_color xor press_u = 1
+
                     if (!isBlue(prev_color, press_u, 0)) continue;
 
                     for (int base_color_u = 0; base_color_u < 2; ++base_color_u) {
@@ -276,9 +225,7 @@ bool solveQuery(vector<int>& answer) {
                         int current_mask = encodeState(press_u, current_color_u);
 
                         if (i == m - 1) {
-                            // Khép chu trình:
-                            // - đỉnh cuối nhận thêm press_0
-                            // - đỉnh đầu nhận thêm press_last
+
                             if (!isBlue(current_color_u, press_0, 0)) continue;
                             if (!isBlue(pending_color_0, press_u, 0)) continue;
                         }
@@ -328,10 +275,6 @@ bool solveQuery(vector<int>& answer) {
         press[i] = getPressed(cycle_mask[i]);
     }
 
-    // Từ:
-    //   current_color_i = base_color_i xor press_{i-1}
-    // suy ra:
-    //   base_color_i = current_color_i xor press_{i-1}
     base_color[0] = getColor(final_start_info) ^ press[1];
     for (int i = 1; i < m; ++i) {
         base_color[i] = getColor(cycle_mask[i]) ^ press[i - 1];

@@ -1,17 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ll long long 
-#define nmax ((int) 2e5) 
+#define ll long long
+#define nmax ((int) 2e5)
 
 int n;
 int a[nmax + 2];
 
 bool check(int val) {
-    // val: gia tri T, dac trung cho day : 2^{T - 1}, 2^{T - 2}, ..., 2^0 
+
     multiset < int > s;
     for (int i = 1; i <= n; ++i) s.insert(a[i]);
-    
+
     for (int i = 1; i <= val && s.empty() == 0; ++i) {
 
         int x = *(prev(s.end()));
@@ -42,7 +42,7 @@ void huyenchi() {
             r = mid - 1;
         }
         else l = mid + 1;
-    }    
+    }
 
     cout << res << '\n';
 }

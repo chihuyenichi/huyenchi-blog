@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ll long long 
+#define ll long long
 #define nmax (int) (2e5 + 2)
 
 int n, K;
@@ -75,10 +75,8 @@ void dfs(int u, int p) {
 
 }
 
-
-
 void huyenchi() {
-    
+
     cin >> n >> K;
 
     for (int i = 1; i < n; ++i) {
@@ -95,7 +93,7 @@ void huyenchi() {
 int main(){
 
     int nTest = 1;
-    // cin >> nTest;
+
     while (nTest--) {
         huyenchi();
     }
