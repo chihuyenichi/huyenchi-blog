@@ -72,18 +72,4 @@ https://chihuyenichi.github.io/huyenchi-blog/
 
 ## Content
 
-Posts published so far:
-
-- `bdsecctf-2026-obsidian-gate`
-- `cpp-exception-unwinding-exploitation`
-- `dich-phai-sqrt-decomposition`
-- `elf-x64-double-free`
-- `knapsack-tree-2025`
-- `return-oriented-programming`
-- `reverse-statement-greedy`
-- `them-ctf-2026-warm-up`
-- `tree-game-theory-dp-on-tree`
-- `tree-walk-coloring-dp`
-- `tryhackme-pwn109`
-
-The first four were migrated from the legacy repository and normalized to the current format.
+Writeups live as Markdown in `content/posts/<slug>/` (staged first in `post-queue/<slug>/`, see Publishing Content above). Each post carries YAML front matter — title, date, category, event, difficulty, tags — and renders at `/writeups/<slug>` with math (KaTeX), GFM tables, and highlighted code. The homepage deck surfaces the latest posts; `/writeups` is the full archive.

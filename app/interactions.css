@@ -23,7 +23,18 @@
    khi click chọn (.is-active) nên card đang mở không bao giờ tự co lại
    dưới con trỏ khi rê sang card khác. */
 .post-deck.is-clickdeck .deck-item {
+  position: relative;
+  transition: flex .42s ease, transform .25s ease;
   transition-delay: 0ms;
+}
+
+/* Hover-bulge: card xẹp phình nhẹ dạng overlay (transform-only, không reflow),
+   phần phình ra được phép đè lên các card bên cạnh. */
+@media (hover: hover) and (pointer: fine) {
+  .post-deck.is-clickdeck .deck-item:has(.deck-face-btn:hover) {
+    transform: scale(1.11);
+    z-index: 2;
+  }
 }
 
 .deck-face-btn {
@@ -79,6 +90,32 @@
     display: flex;
     animation: none;
   }
+}
+
+/* Khung IG scroll cả khung: khi card thấp, lăn chuột để xem phần chữ dưới
+   ảnh (ảnh trôi lên theo). Chặn scroll lan ra page, scrollbar mỏng. */
+.deck-face-link .ig-portrait {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .35) transparent;
+}
+
+.deck-face-link .ig-portrait::-webkit-scrollbar {
+  width: 6px;
+}
+
+.deck-face-link .ig-portrait::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .25);
+  border-radius: 6px;
+}
+
+/* Đã scroll được thì không clamp caption nữa, hiện full text. */
+.deck-face-link .ig-caption {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
 }
 
 /* Clickdeck MAGIC strip: 5 card xẹp luôn đánh vần M-A-G-I-C từ trái sang,

@@ -145,6 +145,13 @@ from pwn import *
 ```
 ````
 
+Luu y voi bang GFM: ky tu `|` trong o math `$...$` bi parser hieu la dau tach cot va lam vo ca bang. Khong viet `$|...|$` trong o cua bang, dung `$\lvert...\rvert$` thay the:
+
+```md
+| Rang buoc | $\lvert\mathcal{F}\rvert$ |
+|---|---|
+```
+
 ## 4. Anh Trong Bai Viet
 
 Luu anh goc trong folder cua post:
