@@ -49,9 +49,7 @@ export function getPost(slug: string): Post | null {
   return post?.status === "published" ? post : null;
 }
 
-export function displayCategory(category: string) {
-  return category === "ai-ml" ? "AI / ML" : category.toUpperCase();
-}
+export { displayCategory, getAllStickers, getSticker, stickerFiles } from "./stickers";
 
 export function getRelatedPosts(post: Post) {
   return getAllPosts().filter((item) => item.slug !== post.slug && (item.category === post.category || item.event === post.event || item.tags.some((tag) => post.tags.includes(tag)))).slice(0, 3);
@@ -74,34 +72,6 @@ const siteBackgrounds = [
 export function getSiteBackground(seed: string) {
   const index = [...seed].reduce((total, character) => total + character.charCodeAt(0), 0) % siteBackgrounds.length;
   return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/images-2/${siteBackgrounds[index]}`;
-}
-
-const difficultyStickers = {
-  easy: ["thumbs-up.jpg", "drool.jpg"],
-  medium: ["reading.png", "lick-screen.jpg"],
-  hard: ["question.jpg", "grumpy.jpg"],
-  insane: ["referee.jpg"],
-} as const;
-
-export function getSticker(post: Pick<Post, "difficulty" | "slug">) {
-  const options = difficultyStickers[post.difficulty];
-  const index = [...post.slug].reduce((total, character) => total + character.charCodeAt(0), 0) % options.length;
-  return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/stickers/${options[index]}`;
-}
-
-export const stickerFiles = [
-  "thumbs-up.jpg",
-  "drool.jpg",
-  "reading.png",
-  "lick-screen.jpg",
-  "question.jpg",
-  "grumpy.jpg",
-  "referee.jpg",
-] as const;
-
-export function getAllStickers() {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-  return stickerFiles.map((file) => `${basePath}/stickers/${file}`);
 }
 
 export function getRenderedMarkdown(post: Post) {

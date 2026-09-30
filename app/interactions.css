@@ -5,12 +5,12 @@
     transition-timing-function: cubic-bezier(.22, .61, .36, 1);
   }
 
-  .post-deck:has(.deck-card:hover) .deck-item {
+  .post-deck:not(.is-clickdeck):has(.deck-card:hover) .deck-item {
     transition-delay: 140ms;
   }
 
-  .deck-card:hover .deck-card-spine,
-  .deck-card:hover .deck-expanded {
+  .post-deck:not(.is-clickdeck) .deck-card:hover .deck-card-spine,
+  .post-deck:not(.is-clickdeck) .deck-card:hover .deck-expanded {
     transition-delay: 120ms;
   }
 
@@ -18,3 +18,128 @@
     transition-duration: 320ms, 460ms;
   }
 }
+
+/* Click-to-pin deck (trang chính): hover chỉ là hint nhẹ, layout chỉ đổi
+   khi click chọn (.is-active) nên card đang mở không bao giờ tự co lại
+   dưới con trỏ khi rê sang card khác. */
+.post-deck.is-clickdeck .deck-item {
+  transition-delay: 0ms;
+}
+
+.deck-face-btn {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.deck-face-btn:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 3px;
+}
+
+.deck-face-link {
+  display: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  color: inherit;
+}
+
+.deck-face-link:hover {
+  text-decoration: none;
+}
+
+.deck-item.is-active .deck-face-link {
+  display: flex;
+  animation: deck-face-in .32s ease;
+}
+
+.deck-face-link .deck-expanded {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+@keyframes deck-face-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  .post-deck.is-clickdeck .deck-face-link {
+    display: flex;
+    animation: none;
+  }
+}
+
+/* Clickdeck MAGIC strip: 5 card xẹp luôn đánh vần M-A-G-I-C từ trái sang,
+   chữ dịch chuyển theo card đang mở (.is-active). Sinh từ mapping hover cũ. */
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(2) .deck-magic::after { content: "M"; transform: rotate(-6deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(2) .deck-word::after { content: "TIEN TAI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(3) .deck-magic::after { content: "A"; transform: rotate(4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(3) .deck-word::after { content: "CP"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(4) .deck-magic::after { content: "G"; transform: rotate(-3deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(4) .deck-word::after { content: "SECURITY"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(5) .deck-magic::after { content: "I"; transform: rotate(5deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(5) .deck-word::after { content: "HUYEN CHI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(6) .deck-magic::after { content: "C"; transform: rotate(-4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(1).is-active) .deck-item:nth-child(6) .deck-word::after { content: "HUST"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(1) .deck-magic::after { content: "M"; transform: rotate(-6deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(1) .deck-word::after { content: "TIEN TAI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(3) .deck-magic::after { content: "A"; transform: rotate(4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(3) .deck-word::after { content: "CP"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(4) .deck-magic::after { content: "G"; transform: rotate(-3deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(4) .deck-word::after { content: "SECURITY"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(5) .deck-magic::after { content: "I"; transform: rotate(5deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(5) .deck-word::after { content: "HUYEN CHI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(6) .deck-magic::after { content: "C"; transform: rotate(-4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(2).is-active) .deck-item:nth-child(6) .deck-word::after { content: "HUST"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(1) .deck-magic::after { content: "M"; transform: rotate(-6deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(1) .deck-word::after { content: "TIEN TAI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(2) .deck-magic::after { content: "A"; transform: rotate(4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(2) .deck-word::after { content: "CP"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(4) .deck-magic::after { content: "G"; transform: rotate(-3deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(4) .deck-word::after { content: "SECURITY"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(5) .deck-magic::after { content: "I"; transform: rotate(5deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(5) .deck-word::after { content: "HUYEN CHI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(6) .deck-magic::after { content: "C"; transform: rotate(-4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(3).is-active) .deck-item:nth-child(6) .deck-word::after { content: "HUST"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(1) .deck-magic::after { content: "M"; transform: rotate(-6deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(1) .deck-word::after { content: "TIEN TAI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(2) .deck-magic::after { content: "A"; transform: rotate(4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(2) .deck-word::after { content: "CP"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(3) .deck-magic::after { content: "G"; transform: rotate(-3deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(3) .deck-word::after { content: "SECURITY"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(5) .deck-magic::after { content: "I"; transform: rotate(5deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(5) .deck-word::after { content: "HUYEN CHI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(6) .deck-magic::after { content: "C"; transform: rotate(-4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(4).is-active) .deck-item:nth-child(6) .deck-word::after { content: "HUST"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(1) .deck-magic::after { content: "M"; transform: rotate(-6deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(1) .deck-word::after { content: "TIEN TAI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(2) .deck-magic::after { content: "A"; transform: rotate(4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(2) .deck-word::after { content: "CP"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(3) .deck-magic::after { content: "G"; transform: rotate(-3deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(3) .deck-word::after { content: "SECURITY"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(4) .deck-magic::after { content: "I"; transform: rotate(5deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(4) .deck-word::after { content: "HUYEN CHI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(6) .deck-magic::after { content: "C"; transform: rotate(-4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(5).is-active) .deck-item:nth-child(6) .deck-word::after { content: "HUST"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(1) .deck-magic::after { content: "M"; transform: rotate(-6deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(1) .deck-word::after { content: "TIEN TAI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(2) .deck-magic::after { content: "A"; transform: rotate(4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(2) .deck-word::after { content: "CP"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(3) .deck-magic::after { content: "G"; transform: rotate(-3deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(3) .deck-word::after { content: "SECURITY"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(4) .deck-magic::after { content: "I"; transform: rotate(5deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(4) .deck-word::after { content: "HUYEN CHI"; }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(5) .deck-magic::after { content: "C"; transform: rotate(-4deg); }
+.post-deck.is-clickdeck:has(.deck-item:nth-child(6).is-active) .deck-item:nth-child(5) .deck-word::after { content: "HUST"; }

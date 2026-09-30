@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HomePostCard } from "@/components/post-card";
+import { HomePostDeck } from "@/components/home-deck";
 import { getAllPosts } from "@/lib/content";
 
 export default function HomePage() {
@@ -11,7 +11,7 @@ export default function HomePage() {
       </section>
       <section className="shell latest-section">
         <div className="section-heading"><div><p className="kicker">LATEST</p><h2>Recent writeups</h2></div><Link href="/writeups">View all →</Link></div>
-        {posts.length ? <div className="post-deck">{posts.slice(0, 6).map((post, index) => <HomePostCard post={post} priority={index === 0} key={post.slug} />)}</div> : <p className="empty">Your next solve belongs here. Publish a writeup from the admin workspace.</p>}
+        {posts.length ? <HomePostDeck posts={posts.slice(0, 6)} /> : <p className="empty">Your next solve belongs here. Publish a writeup from the admin workspace.</p>}
       </section>
     </>
   );
