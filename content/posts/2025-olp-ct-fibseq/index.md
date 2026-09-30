@@ -160,7 +160,7 @@ bài tìm tập con trong không gian $2^{58}$.
 
 Đo bằng code (Gauss trên $\mathbb{F}_2$ với $\mathcal{F}$ giới hạn theo $m$):
 
-| Ràng buộc | $|\mathcal{F}|$ | Bit cao nhất | Rank | Ẩn tự do | Số tập con cần duyệt |
+| Ràng buộc | $\lvert\mathcal{F}\rvert$ | Bit cao nhất | Rank | Ẩn tự do | Số tập con cần duyệt |
 |---|---|---|---|---|---|
 | $m, n < 10^{4}$ | 19 | 13 | 13 | 6 | $2^{6} = 64$ |
 | $m, n < 10^{7}$ | 34 | 24 | 24 | 10 | $2^{10} = 1024$ |
