@@ -15,14 +15,11 @@ tags:
   - Heap
   - CTF
 status: "published"
-quickLinks:
-  - label: "Solver script"
-    url: "/marionette-cscv-2026-vi/solve.py"
-  - label: "English version"
-    url: "/writeups/marionette-cscv-2026"
 ---
 
 ## Tóm tắt
+
+*[English version](/writeups/marionette-cscv-2026)*
 
 Marionette là một challenge TCP forking server, hiện thực một VM tuỳ biến mang tên PuppetScript. Flag được lấy ra bằng cách khai thác lỗi **SHUFFLE mode-1 underwrite với index âm (signed-index underwrite)** để tăng capacity của một buffer hợp lệ vượt quá giới hạn `0x200` mà `NEWBUF` áp đặt, sau đó gọi hidden opcode `0x66` với một stage key được tính toán để giải mã flag page vào buffer đã bị phóng to, và cuối cùng in ra bằng `PRINTS`.
 
