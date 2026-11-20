@@ -1,16 +1,32 @@
 # Tech Notes
 
-A static CTF writeup blog deployed to GitHub Pages.
+A personal technical blog by Huyen Chi: a collection of **CTF writeups** (pwn, reverse engineering, crypto) and **algorithm / competitive-programming notes** (DP on trees, sqrt decomposition, slope trick, ICPC/OLP problems…), written in Markdown, in English and Vietnamese.
+
+The site is fully static: posts are plain Markdown files with YAML front matter, rendered by Next.js and exported to GitHub Pages. There is no database or backend — the repository *is* the CMS.
 
 ## Live Site
 
 https://chihuyenichi.github.io/huyenchi-blog/
+
+## Overview
+
+| Area | What it does |
+| --- | --- |
+| Homepage (`/`) | Interactive deck of the latest posts (click-to-pin cards) |
+| Writeups (`/writeups`, `/writeups/<slug>`) | Full archive and individual posts with KaTeX math, GFM tables, Shiki-highlighted code and copy buttons |
+| Categories (`/categories`) | Browse posts by category (pwn, reverse, dp, …) |
+| Events (`/events`) | Browse posts by CTF / contest |
+| Archive (`/archive`) | Chronological listing |
+| Resources | Per-post downloadable files, served under `/writeups/<slug>/resources/` |
+
+**Tech stack:** Next.js (App Router, static export), React, TypeScript, react-markdown + remark-gfm / remark-math / rehype-katex, Shiki, gray-matter. Deployed with GitHub Actions.
 
 ## Repository Layout
 
 ```text
 app/                         # Next.js static pages
 components/                  # Public UI components
+lib/                         # Content loading (content.ts), resources, stickers
 content/posts/<slug>/
   index.md                   # Markdown writeup with YAML front matter
   images/                    # Post image source files
